@@ -6,62 +6,71 @@
 /* Enterprise Design System Tokens */
 @layer base {
   :root {
-    --background: 210 40% 98%; /* Slate-50 / #F8FAFC */
-    --foreground: 222.2 84% 4.9%; /* Slate-950 */
-    
-    --card: 0 0% 100%; /* White */
+    --background: 210 40% 98%;
+    /* Slate-50 / #F8FAFC */
+    --foreground: 222.2 84% 4.9%;
+    /* Slate-950 */
+
+    --card: 0 0% 100%;
+    /* White */
     --card-foreground: 222.2 84% 4.9%;
-    
+
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    
-    --primary: 221.2 83.2% 53.3%; /* Blue-600 / #2563EB */
+
+    --primary: 221.2 83.2% 53.3%;
+    /* Blue-600 / #2563EB */
     --primary-foreground: 210 40% 98%;
-    
-    --secondary: 243.4 75.4% 59%; /* Indigo-600 / #4F46E5 */
+
+    --secondary: 243.4 75.4% 59%;
+    /* Indigo-600 / #4F46E5 */
     --secondary-foreground: 210 40% 98%;
-    
-    --accent: 188.7 86.2% 43.1%; /* Cyan-500 / #06B6D4 */
+
+    --accent: 188.7 86.2% 43.1%;
+    /* Cyan-500 / #06B6D4 */
     --accent-foreground: 210 40% 98%;
-    
+
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    
-    --destructive: 0 84.2% 60.2%; /* Danger #EF4444 */
+
+    --destructive: 0 84.2% 60.2%;
+    /* Danger #EF4444 */
     --destructive-foreground: 210 40% 98%;
-    
+
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 221.2 83.2% 53.3%;
-    
+
     --radius: 0.75rem;
   }
 
   .dark {
-    --background: 222.2 47.4% 11.2%; /* Slate-900 / #0F172A */
+    --background: 222.2 47.4% 11.2%;
+    /* Slate-900 / #0F172A */
     --foreground: 210 40% 98%;
-    
-    --card: 224 71.4% 4.1%; /* Dark Gray / #111827 */
+
+    --card: 224 71.4% 4.1%;
+    /* Dark Gray / #111827 */
     --card-foreground: 210 40% 98%;
-    
+
     --popover: 224 71.4% 4.1%;
     --popover-foreground: 210 40% 98%;
-    
+
     --primary: 217.2 91.2% 59.8%;
     --primary-foreground: 222.2 47.4% 11.2%;
-    
+
     --secondary: 244.5 74.3% 65.7%;
     --secondary-foreground: 222.2 47.4% 11.2%;
-    
+
     --accent: 189.3 93.7% 47.8%;
     --accent-foreground: 222.2 47.4% 11.2%;
-    
+
     --muted: 223 47% 18%;
     --muted-foreground: 215 20.2% 65.1%;
-    
+
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    
+
     --border: 223 47% 18%;
     --input: 223 47% 18%;
     --ring: 212.7 26.8% 83.9%;
@@ -110,7 +119,8 @@ body {
   margin-bottom: 0;
 }
 
-.prose-custom ul, .prose-custom ol {
+.prose-custom ul,
+.prose-custom ol {
   margin-left: 1.25rem;
   margin-bottom: 0.75rem;
   list-style-type: disc;
@@ -165,9 +175,12 @@ body {
 
 /* Loader animations */
 @keyframes skeleton-glow {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 0.6;
   }
+
   50% {
     opacity: 1;
   }
@@ -179,9 +192,12 @@ body {
 
 /* Voice waveform scale animation */
 @keyframes wave-bounce {
-  0%, 100% {
+
+  0%,
+  100% {
     height: 6px;
   }
+
   50% {
     height: 18px;
   }
@@ -194,10 +210,14 @@ body {
 
 /* Typing indicator dots animation */
 @keyframes typing-dot-bounce {
-  0%, 60%, 100% {
+
+  0%,
+  60%,
+  100% {
     transform: translateY(0);
     opacity: 0.4;
   }
+
   30% {
     transform: translateY(-4px);
     opacity: 1;

@@ -15,14 +15,13 @@ function Message({ message }) {
 
   return (
     <div className="flex items-start gap-4 w-full py-5 border-b border-slate-100 dark:border-slate-900/60 last:border-b-0 px-2 group">
-      
+
       {/* Avatar Wrapper */}
       <div
-        className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border shadow-[0_1px_2px_0_rgba(0,0,0,0.03)] ${
-          isUser
+        className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border shadow-[0_1px_2px_0_rgba(0,0,0,0.03)] ${isUser
             ? "bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-355 font-bold text-xs"
             : "bg-slate-950 border-slate-950 text-white dark:bg-slate-50 dark:border-slate-100 dark:text-slate-900 font-bold"
-        }`}
+          }`}
       >
         {isUser ? (
           "U"
@@ -33,7 +32,7 @@ function Message({ message }) {
 
       {/* Message Content Area */}
       <div className="flex-1 min-w-0 flex flex-col gap-1.5">
-        
+
         {/* Sender Name & Meta details */}
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold text-slate-800 dark:text-slate-200 tracking-tight">

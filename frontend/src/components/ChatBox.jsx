@@ -4,14 +4,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import Message from "./Message";
 import Button from "./ui/Button";
 import Badge from "./ui/Badge";
-import { 
-  Sparkles, 
-  Send, 
-  Paperclip, 
-  Mic, 
-  FolderOpen, 
-  Info, 
-  Check, 
+import {
+  Sparkles,
+  Send,
+  Paperclip,
+  Mic,
+  FolderOpen,
+  Info,
+  Check,
   Star,
   CornerDownLeft,
   X,
@@ -30,7 +30,7 @@ const INITIAL_CONVERSATIONS = [
 export default function ChatBox() {
   const [conversations, setConversations] = useState(INITIAL_CONVERSATIONS);
   const [activeConvId, setActiveConvId] = useState("conv-1");
-  
+
   const [messages, setMessages] = useState([
     {
       sender: "ai",
@@ -38,7 +38,7 @@ export default function ChatBox() {
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
-  
+
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [isSimulatedMode, setIsSimulatedMode] = useState(false);
@@ -91,7 +91,7 @@ export default function ChatBox() {
 
     try {
       const response = await axios.post(API_URL, { message: cleanText });
-      
+
       if (response.data.simulated) {
         setIsSimulatedMode(true);
         triggerMockReply(cleanText);
@@ -121,7 +121,7 @@ export default function ChatBox() {
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }
       ]);
-      
+
       if (messages.length >= 3) {
         setTimeout(() => setShowRating(true), 800);
       }
@@ -199,7 +199,7 @@ To reset your console passwords:
 
   const toggleVoiceRecording = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    
+
     if (!SpeechRecognition) {
       alert("Voice speech recording is not supported in this browser. Please try Chrome, Edge, or Safari.");
       setInput("View pricing plans");
@@ -213,7 +213,7 @@ To reset your console passwords:
       setIsVoiceActive(false);
     } else {
       setIsVoiceActive(true);
-      
+
       const recognition = new SpeechRecognition();
       recognition.continuous = false;
       recognition.interimResults = false;
@@ -267,31 +267,30 @@ To reset your console passwords:
 
   return (
     <div className="flex border border-slate-200 dark:border-slate-850 rounded-2xl overflow-hidden bg-white dark:bg-slate-950 h-[560px] shadow-[0_1px_3px_0_rgba(0,0,0,0.02)]">
-      
+
       {/* Session History Sidebar Panel */}
       <div className="hidden md:flex flex-col w-60 border-r border-slate-200/80 dark:border-slate-850 bg-slate-50/20 dark:bg-slate-900/10 shrink-0">
         <div className="p-4 border-b border-slate-100 dark:border-slate-900 flex justify-between items-center">
           <span className="text-[10px] font-bold uppercase text-slate-400 tracking-wider flex items-center gap-1.5">
             <History className="w-3.5 h-3.5 text-blue-500" /> Active Sessions
           </span>
-          <button 
-            onClick={createNewChat} 
+          <button
+            onClick={createNewChat}
             className="text-[10px] font-bold text-blue-600 hover:text-blue-550 border border-blue-200 hover:bg-blue-500/5 px-2 py-1 rounded-lg cursor-pointer"
           >
             + New
           </button>
         </div>
-        
+
         <div className="flex-1 overflow-y-auto p-2 flex flex-col gap-1.5 custom-scrollbar">
           {conversations.map((conv) => (
             <button
               key={conv.id}
               onClick={() => selectConversation(conv.id)}
-              className={`text-left p-3 rounded-xl transition-all border ${
-                activeConvId === conv.id
+              className={`text-left p-3 rounded-xl transition-all border ${activeConvId === conv.id
                   ? "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-[0_1px_2.5px_0_rgba(0,0,0,0.03)]"
                   : "border-transparent hover:bg-slate-50 dark:hover:bg-slate-900/40"
-              }`}
+                }`}
             >
               <span className="text-xs font-bold text-slate-850 dark:text-slate-200 block truncate">
                 {conv.title}
@@ -306,7 +305,7 @@ To reset your console passwords:
 
       {/* Main Chat Stream Container */}
       <div className="flex-1 flex flex-col min-w-0 bg-white dark:bg-slate-950">
-        
+
         {/* Chat Console Header */}
         <div className="px-5 py-3 border-b border-slate-150 dark:border-slate-900 flex items-center justify-between shrink-0 bg-white/50 dark:bg-slate-950/50 backdrop-blur-md">
           <div className="flex items-center gap-2.5">
@@ -409,7 +408,7 @@ To reset your console passwords:
 
         {/* Chat Input Console Drawer */}
         <div className="p-4 border-t border-slate-150 dark:border-slate-900 bg-white dark:bg-slate-950 shrink-0">
-          
+
           {/* Quick-Prompt Suggestions */}
           <div className="flex flex-wrap gap-2 mb-3">
             {[
@@ -441,7 +440,7 @@ To reset your console passwords:
 
           {/* Input text box control container */}
           <div className="flex gap-2.5 items-center border border-slate-200 dark:border-slate-850 rounded-xl px-3 py-2 bg-slate-50/20 dark:bg-slate-900/30 focus-within:border-slate-950 dark:focus-within:border-slate-200 transition-all duration-150">
-            
+
             {/* Attachment trigger */}
             <label className="cursor-pointer text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
               <input
@@ -468,11 +467,10 @@ To reset your console passwords:
             {/* Voice record microphone button */}
             <button
               onClick={toggleVoiceRecording}
-              className={`p-1.5 rounded-lg transition-all cursor-pointer ${
-                isVoiceActive
+              className={`p-1.5 rounded-lg transition-all cursor-pointer ${isVoiceActive
                   ? "text-rose-500 bg-rose-500/10 animate-pulse"
                   : "text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-850"
-              }`}
+                }`}
               title="Voice Input"
             >
               <Mic className="w-3.5 h-3.5" />
@@ -482,11 +480,10 @@ To reset your console passwords:
             <button
               onClick={() => handleSend()}
               disabled={isTyping || !input.trim()}
-              className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all cursor-pointer ${
-                input.trim() && !isTyping
+              className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all cursor-pointer ${input.trim() && !isTyping
                   ? "bg-slate-950 text-white hover:bg-slate-900 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-200"
                   : "text-slate-300 dark:text-slate-800 bg-transparent"
-              }`}
+                }`}
             >
               <Send className="w-3.5 h-3.5" />
             </button>
@@ -499,7 +496,7 @@ To reset your console passwords:
       <AnimatePresence>
         {showMobileSidebar && (
           <>
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.4 }}
               exit={{ opacity: 0 }}
@@ -516,7 +513,7 @@ To reset your console passwords:
               <div className="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-slate-900 mb-4">
                 <span className="text-xs font-bold uppercase text-slate-400 tracking-wider">Sessions</span>
                 <div className="flex gap-2">
-                  <button 
+                  <button
                     onClick={() => { createNewChat(); setShowMobileSidebar(false); }}
                     className="text-[10px] font-bold text-blue-600 border border-blue-200 hover:bg-blue-500/5 px-2 py-1 rounded-lg cursor-pointer"
                   >
@@ -530,11 +527,10 @@ To reset your console passwords:
                   <button
                     key={conv.id}
                     onClick={() => { selectConversation(conv.id); setShowMobileSidebar(false); }}
-                    className={`text-left p-3 rounded-xl transition-all border ${
-                      activeConvId === conv.id
+                    className={`text-left p-3 rounded-xl transition-all border ${activeConvId === conv.id
                         ? "bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-[0_1px_2.5px_0_rgba(0,0,0,0.02)]"
                         : "border-transparent hover:bg-slate-50 dark:hover:bg-slate-900/40"
-                    }`}
+                      }`}
                   >
                     <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block truncate">
                       {conv.title}

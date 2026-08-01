@@ -3,14 +3,14 @@ import Card, { CardContent } from "../components/ui/Card";
 import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
 import Badge from "../components/ui/Badge";
-import { 
-  Settings as SettingsIcon, 
-  Key, 
-  Database, 
-  Cpu, 
-  Paintbrush, 
-  Check, 
-  Save 
+import {
+  Settings as SettingsIcon,
+  Key,
+  Database,
+  Cpu,
+  Paintbrush,
+  Check,
+  Save
 } from "lucide-react";
 
 export default function Settings() {
@@ -44,14 +44,14 @@ export default function Settings() {
     localStorage.setItem("DEMO_GEMINI_KEY", keys.geminiKey);
     localStorage.setItem("DEMO_PINECONE_KEY", keys.pineconeKey);
     localStorage.setItem("DEMO_INDEX_NAME", keys.indexName);
-    
+
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-2xl mx-auto">
-      
+
       {/* Title Header */}
       <div>
         <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
@@ -63,7 +63,7 @@ export default function Settings() {
       </div>
 
       <form onSubmit={handleSave} className="flex flex-col gap-6">
-        
+
         {/* Theme Settings Card */}
         <Card className="border border-slate-200 dark:border-slate-850">
           <CardContent className="p-6 flex flex-col gap-4">
@@ -74,20 +74,18 @@ export default function Settings() {
                 <p className="text-[10px] text-slate-400 mt-0.5">Toggle light or dark mode user interface preferences.</p>
               </div>
             </div>
-            
+
             <div className="flex items-center justify-between border-t border-slate-100 dark:border-slate-900 pt-4 px-1">
               <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">Dark Mode Interface</span>
               <button
                 type="button"
                 onClick={() => handleThemeToggle(!darkMode)}
-                className={`relative inline-flex h-5.5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  darkMode ? "bg-slate-900 border-slate-800 dark:bg-slate-100" : "bg-slate-250"
-                }`}
+                className={`relative inline-flex h-5.5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${darkMode ? "bg-slate-900 border-slate-800 dark:bg-slate-100" : "bg-slate-250"
+                  }`}
               >
                 <span
-                  className={`pointer-events-none inline-block h-4.5 w-4.5 transform rounded-full bg-white shadow-sm transition duration-200 ease-in-out ${
-                    darkMode ? "translate-x-4.5 dark:bg-slate-900" : "translate-x-0"
-                  }`}
+                  className={`pointer-events-none inline-block h-4.5 w-4.5 transform rounded-full bg-white shadow-sm transition duration-200 ease-in-out ${darkMode ? "translate-x-4.5 dark:bg-slate-900" : "translate-x-0"
+                    }`}
                 />
               </button>
             </div>
@@ -106,7 +104,7 @@ export default function Settings() {
             </div>
 
             <div className="flex flex-col gap-4.5 border-t border-slate-100 dark:border-slate-900 pt-4">
-              
+
               <div className="flex flex-col gap-1.5">
                 <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-0.5">
                   Gemini API Key

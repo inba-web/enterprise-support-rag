@@ -3,12 +3,12 @@ import axios from "axios";
 import Card, { CardContent } from "../components/ui/Card";
 import Button from "../components/ui/Button";
 import Badge from "../components/ui/Badge";
-import { 
-  Upload, 
-  Trash2, 
-  Search, 
-  FileText, 
-  Eye, 
+import {
+  Upload,
+  Trash2,
+  Search,
+  FileText,
+  Eye,
   Info,
   Calendar,
   Layers,
@@ -172,10 +172,10 @@ export default function KnowledgeBase() {
 
   return (
     <div className="flex gap-6 w-full relative">
-      
+
       {/* LEFT SECTION - Main workspace */}
       <div className="flex-1 flex flex-col gap-6 min-w-0">
-        
+
         {/* Title Header */}
         <div>
           <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Knowledge Hub</h2>
@@ -186,26 +186,25 @@ export default function KnowledgeBase() {
 
         {/* Upload Container Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          
+
           {/* Upload Zone Card */}
           <Card className="md:col-span-1 border border-slate-200 dark:border-slate-850">
             <CardContent className="p-5 flex flex-col gap-4">
               <h3 className="text-xs font-bold text-slate-700 dark:text-slate-350 uppercase tracking-wider">
                 Ingest PDF Manual
               </h3>
-              
+
               <form onSubmit={handleUpload} className="flex flex-col gap-4">
-                
+
                 {/* Drag and Drop Zone */}
-                <div 
+                <div
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
                   onDrop={handleDrop}
-                  className={`border border-dashed rounded-xl p-6 flex flex-col items-center justify-center text-center transition-all cursor-pointer relative ${
-                    isDragOver 
-                      ? "border-blue-500 bg-blue-500/5 dark:bg-blue-500/5" 
+                  className={`border border-dashed rounded-xl p-6 flex flex-col items-center justify-center text-center transition-all cursor-pointer relative ${isDragOver
+                      ? "border-blue-500 bg-blue-500/5 dark:bg-blue-500/5"
                       : "border-slate-200 dark:border-slate-800 hover:border-slate-350 bg-slate-50/20 dark:bg-slate-900/10 hover:bg-slate-50/40 dark:hover:bg-slate-900/20"
-                  }`}
+                    }`}
                 >
                   <input
                     type="file"
@@ -267,10 +266,10 @@ export default function KnowledgeBase() {
           {/* Search, Filter, and Data Grid Card */}
           <Card className="md:col-span-2 border border-slate-200 dark:border-slate-850">
             <CardContent className="p-5 flex flex-col gap-4">
-              
+
               {/* Header Action toolbar */}
               <div className="flex flex-col sm:flex-row gap-3 justify-between">
-                
+
                 {/* Search query input */}
                 <div className="flex-1 relative">
                   <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
@@ -321,12 +320,11 @@ export default function KnowledgeBase() {
                       {filteredDocuments.map((doc) => {
                         const isSelected = selectedDocDetails?._id === doc._id;
                         return (
-                          <tr 
-                            key={doc._id} 
+                          <tr
+                            key={doc._id}
                             onClick={() => setSelectedDocDetails(doc)}
-                            className={`hover:bg-slate-50/50 dark:hover:bg-slate-900/15 cursor-pointer transition-colors ${
-                              isSelected ? "bg-slate-100/50 dark:bg-slate-900/10" : ""
-                            }`}
+                            className={`hover:bg-slate-50/50 dark:hover:bg-slate-900/15 cursor-pointer transition-colors ${isSelected ? "bg-slate-100/50 dark:bg-slate-900/10" : ""
+                              }`}
                           >
                             <td className="p-3.5 font-bold max-w-[200px] truncate flex items-center gap-2">
                               <FileText className="w-4 h-4 text-blue-500 shrink-0" />
@@ -339,8 +337,8 @@ export default function KnowledgeBase() {
                                   doc.status === "processed"
                                     ? "success"
                                     : doc.status === "failed"
-                                    ? "danger"
-                                    : "warning"
+                                      ? "danger"
+                                      : "warning"
                                 }
                                 className="capitalize text-[9px] px-2 py-0.5 font-bold"
                               >
@@ -390,7 +388,7 @@ export default function KnowledgeBase() {
             <span className="text-xs font-bold flex items-center gap-2">
               <Info className="w-4 h-4 text-blue-500" /> Document Details
             </span>
-            <button 
+            <button
               onClick={() => setSelectedDocDetails(null)}
               className="p-1 rounded-lg border border-slate-200/60 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 text-slate-400 hover:text-slate-655"
             >
@@ -431,7 +429,7 @@ export default function KnowledgeBase() {
             <div className="border-t border-slate-100 dark:border-slate-900 my-1"></div>
 
             <h4 className="text-[10px] font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">Vector Parameters</h4>
-            
+
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2 text-slate-500">
                 <Calendar className="w-3.5 h-3.5 shrink-0 text-blue-500" />
@@ -457,7 +455,7 @@ export default function KnowledgeBase() {
                 {selectedDocDetails.path}
               </p>
             </div>
-            
+
           </div>
         </div>
       )}
