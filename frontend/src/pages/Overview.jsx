@@ -1,165 +1,277 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import Card, { CardContent, CardHeader } from "../components/ui/Card";
 import Badge from "../components/ui/Badge";
+import { 
+  FileText, 
+  Search, 
+  Cpu, 
+  FolderTree, 
+  Upload, 
+  MessageSquare, 
+  Activity, 
+  ArrowUpRight,
+  TrendingUp,
+  Sparkles,
+  Server
+} from "lucide-react";
 
 export default function Overview() {
   const [stats, setStats] = useState({
-    activeChats: 3,
     documentsCount: 0,
-    apiQueries: 142,
-    uptime: "99.99%"
+    apiQueries: 184,
+    embeddingCount: 0,
+    collectionsCount: 3,
+    activeChats: 5
   });
 
-  const [auditLogs, setAuditLogs] = useState([
-    { id: 1, event: "Express server initialized", status: "success", time: "Just now" },
-    { id: 2, event: "MongoDB Connected: Cluster0", status: "success", time: "10 mins ago" },
-    { id: 3, event: "Pinecone index check: ai-support-assistant", status: "success", time: "11 mins ago" },
-    { id: 4, event: "Environment configurations loaded successfully", status: "success", time: "15 mins ago" }
+  const [recentUploads, setRecentUploads] = useState([]);
+  const [activityTimeline, setActivityTimeline] = useState([
+    { id: 1, type: "system", event: "Workspace console initialized", status: "success", time: "10m ago" },
+    { id: 2, type: "database", event: "MongoDB Atlas cluster online", status: "success", time: "15m ago" },
+    { id: 3, type: "index", event: "Pinecone index 'ai-support-assistant' check success", status: "success", time: "16m ago" }
   ]);
 
+  // Chart data for daily queries
+  const chartData = [
+    { day: "Mon", queries: 24, latency: 190 },
+    { day: "Tue", queries: 35, latency: 220 },
+    { day: "Wed", queries: 30, latency: 205 },
+    { day: "Thu", queries: 48, latency: 240 },
+    { day: "Fri", queries: 55, latency: 215 },
+    { day: "Sat", queries: 32, latency: 198 },
+    { day: "Sun", queries: 42, latency: 210 }
+  ];
+
   useEffect(() => {
-    // Dynamically retrieve document count
-    const fetchDocCount = async () => {
+    const fetchStatsData = async () => {
       try {
         const response = await axios.get("http://localhost:5000/api/documents");
+        const docs = response.data;
+        
+        // Calculate mock embedding count: roughly 4 chunks per doc
+        const docsCount = docs.length;
+        const processedDocs = docs.filter(d => d.status === "processed").length;
+        const totalEmbeddings = processedDocs * 4;
+
         setStats(prev => ({
           ...prev,
-          documentsCount: response.data.length
+          documentsCount: docsCount,
+          embeddingCount: totalEmbeddings
         }));
 
-        // Add uploaded documents events dynamically to the audit log if any exist
-        if (response.data.length > 0) {
-          const docLogs = response.data.slice(0, 3).map((doc, idx) => ({
-            id: `doc-${idx}`,
-            event: `PDF Document "${doc.originalName}" loaded (${doc.status})`,
-            status: doc.status === "failed" ? "danger" : doc.status === "processed" ? "success" : "warning",
+        setRecentUploads(docs.slice(0, 3));
+
+        if (docs.length > 0) {
+          const docActivities = docs.slice(0, 3).map((doc, idx) => ({
+            id: `doc-act-${idx}`,
+            type: "document",
+            event: `File "${doc.originalName}" ingestion status: ${doc.status}`,
+            status: doc.status === "processed" ? "success" : doc.status === "failed" ? "danger" : "warning",
             time: new Date(doc.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           }));
-          setAuditLogs(prev => [...docLogs, ...prev.filter(l => typeof l.id === "number")]);
+          setActivityTimeline(prev => [...docActivities, ...prev.filter(a => typeof a.id === "number")]);
         }
       } catch (err) {
-        console.warn("Failed to retrieve stats from API:", err.message);
+        console.warn("Failed to retrieve dashboard telemetry:", err.message);
       }
     };
-    fetchDocCount();
+    fetchStatsData();
   }, []);
 
   return (
-    <div className="flex flex-col gap-6 w-full max-w-5xl mx-auto">
+    <div className="flex flex-col gap-6 w-full">
       
-      {/* Overview Title Header */}
-      <div>
-        <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-50">Overview</h2>
-        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-          Monitor search metrics, vector database indexes, and database logs.
-        </p>
+      {/* 1. Header welcome */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Workspace Overview</h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            Monitor search latency metrics, vector database capacities, and ingestion activity.
+          </p>
+        </div>
+        <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+          <Server className="w-3.5 h-3.5 text-blue-500" /> Cluster Node: AWS US-EAST-1
+        </div>
       </div>
 
-      {/* KPI Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 w-full">
-        {[
-          { title: "Active Session Chats", value: stats.activeChats, badge: "Live", badgeVar: "success", desc: "User conversations" },
-          { title: "Knowledge Documents", value: stats.documentsCount, badge: `${stats.documentsCount} loaded`, badgeVar: stats.documentsCount > 0 ? "success" : "default", desc: "RAG training materials" },
-          { title: "Cumulative Queries", value: stats.apiQueries, badge: "+12% today", badgeVar: "info", desc: "Chat RAG requests" },
-          { title: "Platform SLA Uptime", value: stats.uptime, badge: "Stable", badgeVar: "success", desc: "Health status OK" }
-        ].map((item, index) => (
-          <Card key={index}>
-            <CardContent className="p-5 flex flex-col gap-3">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                  {item.title}
-                </span>
-                <Badge variant={item.badgeVar}>{item.badge}</Badge>
-              </div>
-              <div>
-                <span className="text-2xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">
-                  {item.value}
-                </span>
-                <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">{item.desc}</p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {/* Grid: SVG Performance Graph & Audit Log List */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* 2. KPI Stats Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
-        {/* Performance Chart Card */}
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-50">Query Volume (Weekly)</h3>
-            <span className="text-[10px] font-medium text-slate-400">Hits/Hour</span>
-          </CardHeader>
-          <CardContent className="p-5 flex justify-center items-center h-64">
-            {/* Minimalist SVG Vector Line Chart (Stripe-style) */}
-            <svg viewBox="0 0 500 200" className="w-full h-full text-slate-300 dark:text-slate-800">
-              {/* Grid Lines */}
-              <line x1="0" y1="40" x2="500" y2="40" stroke="currentColor" strokeWidth="0.5" strokeDasharray="4,4" />
-              <line x1="0" y1="90" x2="500" y2="90" stroke="currentColor" strokeWidth="0.5" strokeDasharray="4,4" />
-              <line x1="0" y1="140" x2="500" y2="140" stroke="currentColor" strokeWidth="0.5" strokeDasharray="4,4" />
-              
-              {/* Chart Line Path */}
-              <path
-                d="M 10 160 Q 80 130 150 145 T 290 80 T 430 50 T 490 65"
-                fill="none"
-                stroke="rgb(79, 70, 229)"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-              />
-              
-              {/* Shadow Fill Area */}
-              <path
-                d="M 10 160 Q 80 130 150 145 T 290 80 T 430 50 T 490 65 L 490 200 L 10 200 Z"
-                fill="url(#gradient-purple)"
-                opacity="0.06"
-              />
-
-              {/* Vector definitions */}
-              <defs>
-                <linearGradient id="gradient-purple" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="rgb(79, 70, 229)" />
-                  <stop offset="100%" stopColor="rgb(79, 70, 229)" stopOpacity="0" />
-                </linearGradient>
-              </defs>
-
-              {/* Data points */}
-              <circle cx="290" cy="80" r="4.5" fill="rgb(79, 70, 229)" stroke="white" strokeWidth="1.5" className="cursor-pointer" />
-              <circle cx="430" cy="50" r="4.5" fill="rgb(79, 70, 229)" stroke="white" strokeWidth="1.5" className="cursor-pointer" />
-              
-              {/* Day Labels */}
-              <text x="10" y="195" fill="currentColor" fontSize="9" fontWeight="500">Mon</text>
-              <text x="90" y="195" fill="currentColor" fontSize="9" fontWeight="500">Tue</text>
-              <text x="170" y="195" fill="currentColor" fontSize="9" fontWeight="500">Wed</text>
-              <text x="250" y="195" fill="currentColor" fontSize="9" fontWeight="500">Thu</text>
-              <text x="330" y="195" fill="currentColor" fontSize="9" fontWeight="500">Fri</text>
-              <text x="410" y="195" fill="currentColor" fontSize="9" fontWeight="500">Sat</text>
-              <text x="470" y="195" fill="currentColor" fontSize="9" fontWeight="500">Sun</text>
-            </svg>
+        {/* Card 1: Documents Indexed */}
+        <Card className="hover:border-slate-300 dark:hover:border-slate-800 transition-all duration-300">
+          <CardContent className="p-5 flex flex-col justify-between h-28">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Documents Ingested</span>
+              <div className="w-7 h-7 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                <FileText className="w-4 h-4" />
+              </div>
+            </div>
+            <div>
+              <span className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{stats.documentsCount}</span>
+              <div className="text-[9px] text-slate-450 mt-1 flex items-center gap-1">
+                <TrendingUp className="w-3 h-3 text-emerald-500" /> +100% since validation
+              </div>
+            </div>
           </CardContent>
         </Card>
 
-        {/* Audit Log list card */}
-        <Card>
-          <CardHeader>
-            <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-50">Audit Log</h3>
-            <span className="text-[10px] font-semibold text-emerald-500">Live</span>
-          </CardHeader>
-          <CardContent className="p-5 flex flex-col gap-4">
-            {auditLogs.map((log) => (
-              <div key={log.id} className="flex items-start justify-between gap-3 border-b border-slate-50 dark:border-slate-800/50 pb-3 last:border-b-0 last:pb-0">
-                <div className="flex flex-col min-w-0">
-                  <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate" title={log.event}>
-                    {log.event}
-                  </span>
-                  <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">{log.time}</span>
-                </div>
-                <Badge variant={log.status === "success" ? "success" : log.status === "danger" ? "danger" : "warning"}>
-                  •
-                </Badge>
+        {/* Card 2: Cumulative Queries */}
+        <Card className="hover:border-slate-300 dark:hover:border-slate-800 transition-all duration-300">
+          <CardContent className="p-5 flex flex-col justify-between h-28">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Queries Logged</span>
+              <div className="w-7 h-7 rounded-lg bg-indigo-500/10 text-indigo-650 dark:text-indigo-400 flex items-center justify-center">
+                <Search className="w-4 h-4" />
               </div>
-            ))}
+            </div>
+            <div>
+              <span className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{stats.apiQueries}</span>
+              <div className="text-[9px] text-slate-450 mt-1 flex items-center gap-1">
+                <TrendingUp className="w-3 h-3 text-emerald-500" /> +12% query load today
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Card 3: Embedding Count */}
+        <Card className="hover:border-slate-300 dark:hover:border-slate-800 transition-all duration-300">
+          <CardContent className="p-5 flex flex-col justify-between h-28">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Vector Chunks</span>
+              <div className="w-7 h-7 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 flex items-center justify-center">
+                <Cpu className="w-4 h-4" />
+              </div>
+            </div>
+            <div>
+              <span className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{stats.embeddingCount}</span>
+              <div className="text-[9px] text-slate-450 mt-1">768-dim Google Embeddings</div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Card 4: Active Chat Sessions */}
+        <Card className="hover:border-slate-300 dark:hover:border-slate-800 transition-all duration-300">
+          <CardContent className="p-5 flex flex-col justify-between h-28">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Chat Sessions</span>
+              <div className="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                <MessageSquare className="w-4 h-4" />
+              </div>
+            </div>
+            <div>
+              <span className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{stats.activeChats}</span>
+              <div className="text-[9px] text-slate-450 mt-1 flex items-center gap-1">
+                <Sparkles className="w-3 h-3 text-blue-500" /> Gemini 3.5 Flash Model
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+      </div>
+
+      {/* 3. Performance Graph (Recharts Area Chart) */}
+      <Card className="hover:shadow-sm">
+        <CardHeader className="flex justify-between items-center px-6 pt-5 pb-3">
+          <div>
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white">Query Latency & Load Metrics</h3>
+            <span className="text-[10px] text-slate-400">Weekly query hits and performance indicators</span>
+          </div>
+          <Badge variant="info">Active</Badge>
+        </CardHeader>
+        <CardContent className="px-6 pb-6 pt-2 h-72">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <defs>
+                <linearGradient id="colorQueries" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#4F46E5" stopOpacity={0.2}/>
+                  <stop offset="95%" stopColor="#4F46E5" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" className="dark:stroke-slate-900" />
+              <XAxis dataKey="day" tick={{ fontSize: 9, fill: "#94A3B8" }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 9, fill: "#94A3B8" }} axisLine={false} tickLine={false} />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: "hsl(var(--card))", 
+                  borderColor: "hsl(var(--border))",
+                  borderRadius: "8px",
+                  fontSize: "11px",
+                  color: "inherit"
+                }} 
+              />
+              <Area type="monotone" dataKey="queries" stroke="#4F46E5" strokeWidth={2} fillOpacity={1} fill="url(#colorQueries)" />
+            </AreaChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
+      {/* 4. Live Activity Timeline & Ingestion Queue */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        {/* Left Side: Recent Upload Ingestion Queue */}
+        <Card className="lg:col-span-2">
+          <CardHeader className="flex items-center justify-between px-6 pt-5 pb-3">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white">Recent Knowledge Uploads</h3>
+            <span className="text-[10px] font-semibold text-slate-400">Database Records</span>
+          </CardHeader>
+          <CardContent className="px-6 pb-6">
+            <div className="flex flex-col gap-3">
+              {recentUploads.length === 0 ? (
+                <div className="py-8 text-center border border-dashed border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50/20 dark:bg-slate-950/20">
+                  <Upload className="w-7 h-7 text-slate-350 mx-auto" />
+                  <p className="text-[10px] text-slate-400 mt-2">No documents uploaded to this workspace yet.</p>
+                </div>
+              ) : (
+                recentUploads.map((doc) => (
+                  <div 
+                    key={doc._id} 
+                    className="flex items-center justify-between p-3.5 rounded-xl border border-slate-200/50 dark:border-slate-850 bg-slate-50/20 dark:bg-slate-950/20"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-8 h-8 rounded-lg bg-blue-500/5 text-blue-500 flex items-center justify-center shrink-0">
+                        <FileText className="w-4 h-4" />
+                      </div>
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-xs font-bold text-slate-850 dark:text-slate-200 truncate">{doc.originalName}</span>
+                        <span className="text-[9px] text-slate-400 mt-0.5">{(doc.size / 1024).toFixed(1)} KB • {new Date(doc.createdAt).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                    <Badge variant={doc.status === "processed" ? "success" : doc.status === "failed" ? "danger" : "warning"}>
+                      {doc.status}
+                    </Badge>
+                  </div>
+                ))
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Right Side: Activity Timeline Log */}
+        <Card>
+          <CardHeader className="flex items-center justify-between px-6 pt-5 pb-3">
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white">Workspace Audit Logs</h3>
+            <div className="flex items-center gap-1.5 text-[9px] text-emerald-500 font-bold uppercase tracking-wider">
+              <Activity className="w-3 h-3 animate-pulse" /> Live
+            </div>
+          </CardHeader>
+          <CardContent className="px-6 pb-6">
+            <div className="flex flex-col gap-5 relative before:absolute before:left-2 before:top-2 before:bottom-2 before:w-[1.5px] before:bg-slate-100 dark:before:bg-slate-850">
+              {activityTimeline.map((log) => (
+                <div key={log.id} className="flex gap-4 relative">
+                  <div className={`w-4 h-4 rounded-full border border-white dark:border-slate-950 flex items-center justify-center shrink-0 z-10 ${
+                    log.status === "success" ? "bg-emerald-500" : log.status === "danger" ? "bg-rose-500" : "bg-amber-500"
+                  }`}>
+                    <span className="w-1.5 h-1.5 bg-white rounded-full"></span>
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-xs font-semibold text-slate-750 dark:text-slate-250 leading-snug">{log.event}</span>
+                    <span className="text-[9px] text-slate-400 mt-0.5">{log.time}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
 

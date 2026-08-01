@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import Auth from "./pages/Auth";
 import Home from "./pages/Home";
+import LandingPage from "./pages/LandingPage";
 
 function App() {
   const [user, setUser] = useState(null);
+  const [showAuth, setShowAuth] = useState(false);
   const [loading, setLoading] = useState(true);
 
   // Sync session on mount
@@ -36,6 +38,7 @@ function App() {
   const handleSignOut = () => {
     setUser(null);
     localStorage.removeItem("user");
+    setShowAuth(false);
   };
 
   if (loading) {
@@ -49,10 +52,14 @@ function App() {
     );
   }
 
-  return user ? (
-    <Home user={user} onSignOut={handleSignOut} />
+  if (user) {
+    return <Home user={user} onSignOut={handleSignOut} />;
+  }
+
+  return showAuth ? (
+    <Auth onLoginSuccess={handleLoginSuccess} onBackToLanding={() => setShowAuth(false)} />
   ) : (
-    <Auth onLoginSuccess={handleLoginSuccess} />
+    <LandingPage onGetStarted={() => setShowAuth(true)} />
   );
 }
 
