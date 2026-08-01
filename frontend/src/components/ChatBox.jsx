@@ -189,7 +189,6 @@ To reset your console passwords:
       setInput("View pricing plans");
     } else {
       setIsVoiceActive(true);
-      setErrorMsg("");
       // Automatically turn off after 3.5s and input query
       setTimeout(() => {
         setIsVoiceActive(false);
@@ -252,8 +251,8 @@ To reset your console passwords:
         {/* Chat Console Header */}
         <div className="px-5 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-slate-800 dark:text-slate-200">Antigravity AI Agent</span>
-            <Badge variant="default" className="text-[9px] px-1.5 py-0 font-medium">Gemini 1.5 Flash</Badge>
+            <span className="text-xs font-bold text-slate-800 dark:text-slate-200">SyncVantage AI Agent</span>
+            <Badge variant="default" className="text-[9px] px-1.5 py-0 font-medium">Gemini 3.5 Flash</Badge>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>

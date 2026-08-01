@@ -176,13 +176,42 @@ body {
 /* Voice waveform scale animation */
 @keyframes wave-bounce {
   0%, 100% {
-    transform: scaleY(0.3);
+    height: 6px;
   }
   50% {
-    transform: scaleY(1);
+    height: 18px;
   }
 }
 
 .animate-wave-bar {
-  animation: wave-bounce 1s ease-in-out infinite;
+  animation: wave-bounce 0.8s ease-in-out infinite;
+  min-height: 4px;
+}
+
+/* Typing indicator dots animation */
+@keyframes typing-dot-bounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+.animate-typing-dot {
+  animation: typing-dot-bounce 1.4s ease-in-out infinite;
+}
+
+.delay-0 {
+  animation-delay: 0ms;
+}
+
+.delay-200 {
+  animation-delay: 200ms;
+}
+
+.delay-400 {
+  animation-delay: 400ms;
 }

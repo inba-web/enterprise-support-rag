@@ -55,7 +55,7 @@ export default function Profile({ user = { name: "john.doe", email: "john.doe@co
 
               <div className="flex items-center justify-between py-1 border-b border-slate-50 dark:border-slate-800/40">
                 <span className="font-medium text-slate-500 dark:text-slate-400">Organizations</span>
-                <span className="font-semibold text-slate-800 dark:text-slate-200">Antigravity Workspace</span>
+                <span className="font-semibold text-slate-800 dark:text-slate-200">SyncVantage Workspace</span>
               </div>
 
               <div className="flex items-center justify-between py-1 border-b border-slate-50 dark:border-slate-800/40">
