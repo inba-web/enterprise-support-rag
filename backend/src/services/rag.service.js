@@ -1,18 +1,17 @@
 import fs from "fs";
-import { createRequire } from "module";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
+import { PDFParse } from "pdf-parse";
 import Document from "../models/Document.js";
 import { getEmbedding, isGeminiActive } from "./gemini.service.js";
 import { getPineconeIndex } from "./pinecone.service.js";
 
-const require = createRequire(import.meta.url);
-const pdfParse = require("pdf-parse");
-
 // Helper function to extract text from a local PDF file
 const extractPdfText = async (filePath) => {
   const dataBuffer = fs.readFileSync(filePath);
-  const data = await pdfParse(dataBuffer);
-  return data.text;
+  const parser = new PDFParse({ data: dataBuffer });
+  const result = await parser.getText();
+  await parser.destroy(); // Always call destroy() to free memory
+  return result.text;
 };
 
 // Process an uploaded document in the background: Extract → Chunk → Embed → Index
@@ -92,7 +91,7 @@ export const processDocumentBackground = async (docId) => {
     const batchSize = 100;
     for (let i = 0; i < vectors.length; i += batchSize) {
       const batch = vectors.slice(i, i + batchSize);
-      await pineconeIndex.upsert(batch);
+      await pineconeIndex.upsert({ records: batch });
     }
 
     // 7. Update status to 'processed'
