@@ -1,8 +1,8 @@
-# 🔮 SyncVantage AI — Enterprise Support Console
+# 🔮 KnowledgeHub AI — Enterprise Knowledge Intelligence Platform
 
-> A premium, high-performance RAG-powered Customer Support Console built for modern enterprises. Powered by Google Gemini and Pinecone Vector Database, with a zero-configuration local database fallback.
+> A premium, high-performance RAG-powered Enterprise Knowledge Intelligence Platform built for modern workspaces. Powered by Google Gemini and Pinecone Vector Database, with a zero-configuration local database fallback.
 
-![SyncVantage AI Dashboard](./frontend/src/assets/dashboard_preview.png)
+![KnowledgeHub AI Dashboard](./frontend/src/assets/dashboard_preview.png)
 
 ---
 

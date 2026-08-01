@@ -4,10 +4,23 @@ import { motion, AnimatePresence } from "framer-motion";
 import Message from "./Message";
 import Button from "./ui/Button";
 import Badge from "./ui/Badge";
+import { 
+  Sparkles, 
+  Send, 
+  Paperclip, 
+  Mic, 
+  FolderOpen, 
+  Info, 
+  Check, 
+  Star,
+  CornerDownLeft,
+  X,
+  History,
+  Volume2
+} from "lucide-react";
 
 const API_URL = "http://localhost:5000/api/chat";
 
-// Mock conversation history listing
 const INITIAL_CONVERSATIONS = [
   { id: "conv-1", title: "General Inquiries & Pricing", summary: "View billing tiers and SLA uptime options." },
   { id: "conv-2", title: "Refund Policy Details", summary: "Request processes for transaction offsets." },
@@ -34,11 +47,19 @@ export default function ChatBox() {
   const [rating, setRating] = useState(0);
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
-  // Advanced UX states: Voice & Attachments
   const [isVoiceActive, setIsVoiceActive] = useState(false);
   const [attachedFile, setAttachedFile] = useState(null);
 
   const messagesEndRef = useRef(null);
+  const recognitionRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -48,13 +69,11 @@ export default function ChatBox() {
     scrollToBottom();
   }, [messages, isTyping]);
 
-  // Simulate prompt suggestion clicks
   const handleSuggestionClick = (keyword) => {
     setInput(keyword);
     handleSend(keyword);
   };
 
-  // Process RAG API or simulated fallback replies
   const handleSend = async (textToSend = input) => {
     const cleanText = textToSend.trim();
     if (!cleanText) return;
@@ -103,14 +122,12 @@ export default function ChatBox() {
         }
       ]);
       
-      // Trigger feedback prompt occasionally
       if (messages.length >= 3) {
         setTimeout(() => setShowRating(true), 800);
       }
-    }, 1500);
+    }, 1200);
   };
 
-  // Local simulated responses matching help-desk keywords
   const triggerMockReply = (userText) => {
     const textLower = userText.toLowerCase();
     let reply = `I'm ready to answer. Please load document manual PDFs or enter API keys in settings to configure custom answers.`;
@@ -145,7 +162,6 @@ To reset your console passwords:
     triggerReply(reply);
   };
 
-  // Select alternative conversation chain
   const selectConversation = (id) => {
     setActiveConvId(id);
     const conv = conversations.find(c => c.id === id);
@@ -160,7 +176,6 @@ To reset your console passwords:
     setFeedbackSubmitted(false);
   };
 
-  // Start new mock support conversation
   const createNewChat = () => {
     const newId = `conv-${Date.now()}`;
     const newConv = {
@@ -182,19 +197,55 @@ To reset your console passwords:
     setIsSimulatedMode(false);
   };
 
-  // Trigger simulated voice speech recording
   const toggleVoiceRecording = () => {
-    if (isVoiceActive) {
-      setIsVoiceActive(false);
-      // Insert mock speech transcription
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+    if (!SpeechRecognition) {
+      alert("Voice speech recording is not supported in this browser. Please try Chrome, Edge, or Safari.");
       setInput("View pricing plans");
+      return;
+    }
+
+    if (isVoiceActive) {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+      setIsVoiceActive(false);
     } else {
       setIsVoiceActive(true);
-      // Automatically turn off after 3.5s and input query
-      setTimeout(() => {
+      
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = "en-US";
+
+      recognition.onstart = () => {
+        setIsVoiceActive(true);
+      };
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        if (transcript) {
+          setInput(transcript);
+        }
+      };
+
+      recognition.onerror = (event) => {
+        console.error("Speech recognition error:", event.error);
         setIsVoiceActive(false);
-        setInput("View pricing plans");
-      }, 3500);
+      };
+
+      recognition.onend = () => {
+        setIsVoiceActive(false);
+      };
+
+      recognitionRef.current = recognition;
+      try {
+        recognition.start();
+      } catch (err) {
+        console.error("Failed to start speech recognition:", err);
+        setIsVoiceActive(false);
+      }
     }
   };
 
@@ -211,35 +262,41 @@ To reset your console passwords:
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }
       ]);
-    }, 1500);
+    }, 1000);
   };
 
   return (
-    <div className="flex border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden bg-white dark:bg-slate-950 h-[600px] shadow-[0_1px_3px_0_rgba(0,0,0,0.02)]">
+    <div className="flex border border-slate-200 dark:border-slate-850 rounded-2xl overflow-hidden bg-white dark:bg-slate-950 h-[560px] shadow-[0_1px_3px_0_rgba(0,0,0,0.02)]">
       
       {/* Session History Sidebar Panel */}
-      <div className="hidden md:flex flex-col w-64 border-r border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/10 shrink-0">
-        <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
-          <span className="text-[11px] font-bold uppercase text-slate-400 tracking-wider">Sessions</span>
-          <Button variant="outline" size="sm" onClick={createNewChat} className="px-2 h-7 font-bold">
+      <div className="hidden md:flex flex-col w-60 border-r border-slate-200/80 dark:border-slate-850 bg-slate-50/20 dark:bg-slate-900/10 shrink-0">
+        <div className="p-4 border-b border-slate-100 dark:border-slate-900 flex justify-between items-center">
+          <span className="text-[10px] font-bold uppercase text-slate-400 tracking-wider flex items-center gap-1.5">
+            <History className="w-3.5 h-3.5 text-blue-500" /> Active Sessions
+          </span>
+          <button 
+            onClick={createNewChat} 
+            className="text-[10px] font-bold text-blue-600 hover:text-blue-550 border border-blue-200 hover:bg-blue-500/5 px-2 py-1 rounded-lg cursor-pointer"
+          >
             + New
-          </Button>
+          </button>
         </div>
+        
         <div className="flex-1 overflow-y-auto p-2 flex flex-col gap-1.5 custom-scrollbar">
           {conversations.map((conv) => (
             <button
               key={conv.id}
               onClick={() => selectConversation(conv.id)}
-              className={`text-left p-3 rounded-lg transition-all border ${
+              className={`text-left p-3 rounded-xl transition-all border ${
                 activeConvId === conv.id
-                  ? "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-850 shadow-[0_1px_2px_0_rgba(0,0,0,0.02)]"
-                  : "border-transparent hover:bg-slate-100/50 dark:hover:bg-slate-900/50"
+                  ? "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-[0_1px_2.5px_0_rgba(0,0,0,0.03)]"
+                  : "border-transparent hover:bg-slate-50 dark:hover:bg-slate-900/40"
               }`}
             >
-              <span className="text-xs font-semibold text-slate-800 dark:text-slate-250 block truncate">
+              <span className="text-xs font-bold text-slate-850 dark:text-slate-200 block truncate">
                 {conv.title}
               </span>
-              <span className="text-[10px] text-slate-400 dark:text-slate-500 block truncate mt-0.5">
+              <span className="text-[9px] text-slate-450 dark:text-slate-500 block truncate mt-0.5">
                 {conv.summary}
               </span>
             </button>
@@ -249,42 +306,47 @@ To reset your console passwords:
 
       {/* Main Chat Stream Container */}
       <div className="flex-1 flex flex-col min-w-0 bg-white dark:bg-slate-950">
+        
         {/* Chat Console Header */}
-        <div className="px-5 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-2">
+        <div className="px-5 py-3 border-b border-slate-150 dark:border-slate-900 flex items-center justify-between shrink-0 bg-white/50 dark:bg-slate-950/50 backdrop-blur-md">
+          <div className="flex items-center gap-2.5">
             <button
               onClick={() => setShowMobileSidebar(true)}
-              className="md:hidden p-1.5 -ml-1 rounded-lg border border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 cursor-pointer"
-              title="View Chat Sessions"
+              className="md:hidden p-1.5 rounded-lg border border-slate-200 dark:border-slate-850 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-900 cursor-pointer"
             >
-              📂
+              <FolderOpen className="w-3.5 h-3.5" />
             </button>
-            <span className="text-xs font-bold text-slate-800 dark:text-slate-200">SyncVantage AI Agent</span>
-            <Badge variant="default" className="text-[9px] px-1.5 py-0 font-medium">Gemini 3.5 Flash</Badge>
+            <span className="text-xs font-bold text-slate-850 dark:text-slate-100">KnowledgeHub AI Agent</span>
+            <Badge variant="default" className="text-[9px] px-1.5 py-0 font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400">
+              Gemini 3.5 Flash
+            </Badge>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
-            <span className="text-[10px] font-semibold text-slate-400 tracking-wide uppercase">Active</span>
+            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+            <span className="text-[9px] font-bold text-slate-400 tracking-wider uppercase">Pipeline Active</span>
           </div>
         </div>
 
-        {/* Simulated Warning Banner */}
+        {/* Offline simulated banner */}
         {isSimulatedMode && (
-          <div className="bg-amber-500/10 border-b border-amber-500/20 px-5 py-2 flex items-center justify-between text-[10px] text-amber-500 font-medium">
-            <span>⚠️ Operating in Simulated Offline Mode. Configure API keys in Settings to connect live RAG.</span>
+          <div className="bg-amber-500/10 border-b border-amber-500/20 px-5 py-2 flex items-center justify-between text-[10px] text-amber-600 dark:text-amber-400 font-bold">
+            <span className="flex items-center gap-1.5">
+              <Info className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+              Operating in Simulated Offline Mode. Configure API keys in Settings to connect live RAG.
+            </span>
             <button onClick={() => setIsSimulatedMode(false)} className="text-amber-500 hover:text-amber-700">✕</button>
           </div>
         )}
 
         {/* Scrollable Messages Stream */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-2 custom-scrollbar bg-slate-50/20 dark:bg-slate-950/10">
+        <div className="flex-1 overflow-y-auto p-5 space-y-2 custom-scrollbar bg-slate-50/10 dark:bg-slate-950/5">
           <AnimatePresence initial={false}>
             {messages.map((msg, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.15 }}
+                transition={{ duration: 0.12 }}
               >
                 <Message message={msg} />
               </motion.div>
@@ -300,53 +362,55 @@ To reset your console passwords:
 
         {/* Rating Prompt Overlay */}
         {showRating && (
-          <div className="mx-5 mb-4 p-4 border border-indigo-150 dark:border-indigo-900/60 bg-indigo-50/20 dark:bg-indigo-950/10 rounded-xl relative flex flex-col items-center justify-center">
-            <button onClick={() => setShowRating(false)} className="absolute top-2.5 right-2.5 text-slate-400 hover:text-slate-600">
-              ✕
+          <div className="mx-5 mb-4 p-4 border border-blue-200/50 dark:border-blue-900/40 bg-blue-500/5 dark:bg-blue-950/10 rounded-xl relative flex flex-col items-center justify-center">
+            <button onClick={() => setShowRating(false)} className="absolute top-2.5 right-2.5 text-slate-450 hover:text-slate-655 cursor-pointer">
+              <X className="w-3.5 h-3.5" />
             </button>
             {!feedbackSubmitted ? (
               <>
-                <p className="text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-2">Rate this conversation:</p>
+                <p className="text-[11px] font-bold text-slate-700 dark:text-slate-350 mb-2">Rate this conversation:</p>
                 <div className="flex gap-2">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
                       key={star}
                       onClick={() => handleRatingSubmit(star)}
-                      className="text-xl transition-transform hover:scale-110"
+                      className="text-lg transition-transform hover:scale-110 cursor-pointer"
                     >
-                      ⭐
+                      <Star className="w-5 h-5 text-amber-400 fill-amber-400" />
                     </button>
                   ))}
                 </div>
               </>
             ) : (
-              <p className="text-[11px] font-semibold text-emerald-600">🎉 Feedback logged. Thank you!</p>
+              <p className="text-[11px] font-bold text-emerald-600">🎉 Feedback logged. Thank you!</p>
             )}
           </div>
         )}
 
         {/* Voice recording indicators */}
         {isVoiceActive && (
-          <div className="mx-5 mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center justify-between">
+          <div className="mx-5 mb-4 p-3.5 bg-rose-500/5 border border-rose-500/10 rounded-xl flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="w-2.5 h-2.5 bg-red-500 rounded-full animate-ping"></span>
-              <span className="text-xs font-semibold text-red-500">Recording audio... Speak now</span>
+              <span className="w-2.5 h-2.5 bg-rose-500 rounded-full animate-ping"></span>
+              <span className="text-xs font-bold text-rose-500 flex items-center gap-1.5">
+                <Volume2 className="w-4 h-4" /> Recording audio... Speak now
+              </span>
             </div>
-            {/* Minimalist interactive visual audio waveform */}
-            <div className="flex gap-1 items-end h-5">
-              <span className="w-0.5 bg-red-500 rounded animate-wave-bar" style={{ animationDelay: "0.1s" }}></span>
-              <span className="w-0.5 bg-red-500 rounded animate-wave-bar" style={{ animationDelay: "0.3s" }}></span>
-              <span className="w-0.5 bg-red-500 rounded animate-wave-bar" style={{ animationDelay: "0.5s" }}></span>
-              <span className="w-0.5 bg-red-500 rounded animate-wave-bar" style={{ animationDelay: "0.2s" }}></span>
-              <span className="w-0.5 bg-red-500 rounded animate-wave-bar" style={{ animationDelay: "0.4s" }}></span>
+            {/* Audio Waveform bouncing bars */}
+            <div className="flex gap-0.5 items-end h-5">
+              <span className="w-[2px] bg-rose-500 rounded animate-wave-bar" style={{ animationDelay: "0.1s" }}></span>
+              <span className="w-[2px] bg-rose-500 rounded animate-wave-bar" style={{ animationDelay: "0.3s" }}></span>
+              <span className="w-[2px] bg-rose-500 rounded animate-wave-bar" style={{ animationDelay: "0.5s" }}></span>
+              <span className="w-[2px] bg-rose-500 rounded animate-wave-bar" style={{ animationDelay: "0.2s" }}></span>
+              <span className="w-[2px] bg-rose-500 rounded animate-wave-bar" style={{ animationDelay: "0.4s" }}></span>
             </div>
           </div>
         )}
 
         {/* Chat Input Console Drawer */}
-        <div className="p-4 border-t border-slate-150 dark:border-slate-800 bg-white dark:bg-slate-950 shrink-0">
+        <div className="p-4 border-t border-slate-150 dark:border-slate-900 bg-white dark:bg-slate-950 shrink-0">
           
-          {/* Quick-Prompt chips */}
+          {/* Quick-Prompt Suggestions */}
           <div className="flex flex-wrap gap-2 mb-3">
             {[
               { label: "💳 Pricing Tiers", text: "What are your pricing plans?" },
@@ -356,41 +420,40 @@ To reset your console passwords:
               <button
                 key={idx}
                 onClick={() => handleSuggestionClick(chip.text)}
-                className="text-[10px] px-2.5 py-1 bg-slate-50 text-slate-500 border border-slate-200 dark:bg-slate-900 dark:text-slate-400 dark:border-slate-800 rounded-md hover:bg-slate-100 hover:text-slate-800 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-colors font-medium focus:outline-none"
+                className="text-[10px] px-2.5 py-1 bg-slate-50 text-slate-500 border border-slate-200/80 dark:bg-slate-900/60 dark:text-slate-400 dark:border-slate-850 rounded-lg hover:bg-slate-100 hover:text-slate-800 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-colors font-semibold focus:outline-none cursor-pointer"
               >
                 {chip.label}
               </button>
             ))}
           </div>
 
-          {/* Attachment tag preview drawer */}
+          {/* Attachment preview */}
           {attachedFile && (
-            <div className="mb-3 px-3 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg flex items-center justify-between text-[10px]">
-              <span className="text-slate-600 dark:text-slate-300 font-semibold truncate">
+            <div className="mb-3 px-3 py-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-850 rounded-lg flex items-center justify-between text-[10px]">
+              <span className="text-slate-655 dark:text-slate-350 font-bold truncate">
                 📎 {attachedFile.name} (Ready to attach)
               </span>
-              <button onClick={() => setAttachedFile(null)} className="text-rose-500 hover:text-rose-700">
+              <button onClick={() => setAttachedFile(null)} className="text-rose-500 hover:text-rose-700 cursor-pointer">
                 ✕
               </button>
             </div>
           )}
 
           {/* Input text box control container */}
-          <div className="flex gap-2 items-center border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 bg-slate-50/50 dark:bg-slate-900/20 focus-within:border-slate-950 dark:focus-within:border-slate-100 transition-all duration-150">
-            {/* Attachment icon trigger */}
-            <label className="cursor-pointer text-slate-400 hover:text-slate-600 p-1 rounded-lg focus-within:ring-2 focus-within:ring-slate-350">
+          <div className="flex gap-2.5 items-center border border-slate-200 dark:border-slate-850 rounded-xl px-3 py-2 bg-slate-50/20 dark:bg-slate-900/30 focus-within:border-slate-950 dark:focus-within:border-slate-200 transition-all duration-150">
+            
+            {/* Attachment trigger */}
+            <label className="cursor-pointer text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
               <input
                 type="file"
                 accept=".pdf"
                 className="hidden"
                 onChange={(e) => setAttachedFile(e.target.files[0])}
               />
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-              </svg>
+              <Paperclip className="w-3.5 h-3.5" />
             </label>
 
-            {/* Main input */}
+            {/* Input text field */}
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -398,38 +461,34 @@ To reset your console passwords:
                 if (e.key === "Enter") handleSend();
               }}
               placeholder="Ask a support question..."
-              className="flex-1 bg-transparent border-none outline-none text-slate-850 dark:text-slate-150 text-xs py-1"
+              className="flex-1 bg-transparent border-none outline-none text-slate-850 dark:text-slate-100 text-xs py-1 placeholder-slate-400"
               disabled={isTyping}
             />
 
             {/* Voice record microphone button */}
             <button
               onClick={toggleVoiceRecording}
-              className={`p-1.5 rounded-lg transition-colors focus:outline-none ${
+              className={`p-1.5 rounded-lg transition-all cursor-pointer ${
                 isVoiceActive
-                  ? "text-red-500 bg-red-500/10"
-                  : "text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  ? "text-rose-500 bg-rose-500/10 animate-pulse"
+                  : "text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-850"
               }`}
               title="Voice Input"
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-              </svg>
+              <Mic className="w-3.5 h-3.5" />
             </button>
 
             {/* Submit arrow button */}
             <button
               onClick={() => handleSend()}
               disabled={isTyping || !input.trim()}
-              className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all ${
+              className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all cursor-pointer ${
                 input.trim() && !isTyping
-                  ? "bg-slate-900 text-white hover:bg-slate-850 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-200"
-                  : "text-slate-300 dark:text-slate-650"
+                  ? "bg-slate-950 text-white hover:bg-slate-900 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-200"
+                  : "text-slate-300 dark:text-slate-800 bg-transparent"
               }`}
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
+              <Send className="w-3.5 h-3.5" />
             </button>
           </div>
 
@@ -451,15 +510,18 @@ To reset your console passwords:
               initial={{ x: "-100%" }}
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
-              transition={{ type: "tween", duration: 0.2 }}
-              className="fixed inset-y-0 left-0 w-64 bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800 z-40 flex flex-col p-4 md:hidden"
+              transition={{ type: "tween", duration: 0.18 }}
+              className="fixed inset-y-0 left-0 w-60 bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-slate-850 z-40 flex flex-col p-4 md:hidden"
             >
-              <div className="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-900 mb-4">
+              <div className="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-slate-900 mb-4">
                 <span className="text-xs font-bold uppercase text-slate-400 tracking-wider">Sessions</span>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm" onClick={() => { createNewChat(); setShowMobileSidebar(false); }} className="px-2 h-7 font-bold">
+                  <button 
+                    onClick={() => { createNewChat(); setShowMobileSidebar(false); }}
+                    className="text-[10px] font-bold text-blue-600 border border-blue-200 hover:bg-blue-500/5 px-2 py-1 rounded-lg cursor-pointer"
+                  >
                     + New
-                  </Button>
+                  </button>
                   <button onClick={() => setShowMobileSidebar(false)} className="text-slate-400 text-sm p-1">✕</button>
                 </div>
               </div>
@@ -468,16 +530,16 @@ To reset your console passwords:
                   <button
                     key={conv.id}
                     onClick={() => { selectConversation(conv.id); setShowMobileSidebar(false); }}
-                    className={`text-left p-3 rounded-lg transition-all border ${
+                    className={`text-left p-3 rounded-xl transition-all border ${
                       activeConvId === conv.id
-                        ? "bg-slate-50 dark:bg-slate-900 border-slate-250 dark:border-slate-800 shadow-[0_1px_2px_0_rgba(0,0,0,0.02)]"
-                        : "border-transparent hover:bg-slate-50 dark:hover:bg-slate-900/50"
+                        ? "bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-[0_1px_2.5px_0_rgba(0,0,0,0.02)]"
+                        : "border-transparent hover:bg-slate-50 dark:hover:bg-slate-900/40"
                     }`}
                   >
-                    <span className="text-xs font-semibold text-slate-800 dark:text-slate-250 block truncate">
+                    <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block truncate">
                       {conv.title}
                     </span>
-                    <span className="text-[10px] text-slate-400 dark:text-slate-500 block truncate mt-0.5">
+                    <span className="text-[9px] text-slate-450 dark:text-slate-500 block truncate mt-0.5">
                       {conv.summary}
                     </span>
                   </button>
