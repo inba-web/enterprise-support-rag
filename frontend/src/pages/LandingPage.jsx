@@ -2,17 +2,17 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import Button from "../components/ui/Button";
 import Card, { CardContent } from "../components/ui/Card";
-import { 
-  Database, 
-  Cpu, 
-  Search, 
-  FileText, 
-  ShieldCheck, 
-  ArrowRight, 
-  Activity, 
-  Terminal, 
-  RefreshCcw, 
-  Menu, 
+import {
+  Database,
+  Cpu,
+  Search,
+  FileText,
+  ShieldCheck,
+  ArrowRight,
+  Activity,
+  Terminal,
+  RefreshCcw,
+  Menu,
   X,
   Plus
 } from "lucide-react";
@@ -75,7 +75,7 @@ export default function LandingPage({ onGetStarted }) {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-200">
-      
+
       {/* 1. Header Navbar */}
       <header className="fixed top-0 w-full z-50 border-b border-slate-200/60 dark:border-slate-900/60 bg-white/70 dark:bg-slate-950/70 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -106,7 +106,7 @@ export default function LandingPage({ onGetStarted }) {
 
         {/* Mobile menu expanded */}
         {mobileMenuOpen && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             className="md:hidden border-b border-slate-200 dark:border-slate-900 bg-white dark:bg-slate-950 p-4 flex flex-col gap-3.5 text-center"
@@ -124,7 +124,7 @@ export default function LandingPage({ onGetStarted }) {
       {/* 2. Hero Section */}
       <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-12">
         <div className="flex-1 flex flex-col gap-6 text-center lg:text-left items-center lg:items-start">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3 }}
@@ -132,7 +132,7 @@ export default function LandingPage({ onGetStarted }) {
           >
             ✦ Next-Gen Knowledge Management
           </motion.div>
-          
+
           <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-slate-900 dark:text-white leading-tight">
             Enterprise Knowledge <br className="hidden sm:inline" />
             <span className="bg-gradient-to-r from-blue-650 to-indigo-500 dark:from-blue-400 dark:to-cyan-400 bg-clip-text text-transparent">Intelligence Platform</span>
@@ -157,7 +157,7 @@ export default function LandingPage({ onGetStarted }) {
         {/* Animated Vector Illustration Hero Right */}
         <div className="flex-1 w-full max-w-lg lg:max-w-none flex justify-center relative">
           <div className="absolute inset-0 bg-blue-550/5 dark:bg-blue-400/5 rounded-full blur-3xl filter"></div>
-          
+
           <svg className="w-full max-w-md h-96 relative z-10 text-slate-200 dark:text-slate-800" viewBox="0 0 400 400" fill="none">
             {/* Background SVG Grid Pattern */}
             <defs>
@@ -166,7 +166,7 @@ export default function LandingPage({ onGetStarted }) {
               </pattern>
             </defs>
             <rect width="100%" height="100%" fill="url(#hero-grid)" className="text-slate-300 dark:text-slate-900" />
-            
+
             {/* Connecting Graph/Brain Nodes */}
             <g className="stroke-slate-300 dark:stroke-slate-800" strokeWidth="1.5">
               <line x1="200" y1="100" x2="120" y2="180" />
@@ -196,7 +196,7 @@ export default function LandingPage({ onGetStarted }) {
             <rect x="290" y="240" width="16" height="20" rx="2" className="fill-slate-100 dark:fill-slate-950 stroke-slate-400 dark:stroke-slate-700" strokeWidth="1" />
             <line x1="294" y1="246" x2="302" y2="246" className="stroke-slate-400" />
             <line x1="294" y1="250" x2="302" y2="250" className="stroke-slate-400" />
-            
+
             {/* Glowing Data Packets orbiting path */}
             <circle cx="160" cy="140" r="4" className="fill-blue-500 animate-bounce" />
             <circle cx="240" cy="140" r="4" className="fill-cyan-500 animate-ping" />
@@ -243,10 +243,10 @@ export default function LandingPage({ onGetStarted }) {
 
         <Card className="p-6 md:p-8 bg-white dark:bg-slate-950/40 border border-slate-200 dark:border-slate-900">
           <CardContent className="flex flex-col gap-8">
-            
+
             {/* Step-by-step layout flow using cards */}
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 relative">
-              
+
               <div className="flex flex-col gap-3 p-4 rounded-xl border border-slate-200/70 dark:border-slate-850/60 bg-slate-50/50 dark:bg-slate-900/10">
                 <div className="w-7 h-7 rounded-lg bg-blue-500/10 text-blue-600 text-xs font-bold flex items-center justify-center">1</div>
                 <span className="text-xs font-bold">1. Document Ingestion</span>
@@ -297,7 +297,7 @@ export default function LandingPage({ onGetStarted }) {
             {faqs.map((faq, index) => {
               const isOpen = activeFaq === index;
               return (
-                <div 
+                <div
                   key={index}
                   className="border border-slate-200/70 dark:border-slate-900/80 rounded-xl overflow-hidden bg-slate-50/20 dark:bg-slate-950/20 transition-all"
                 >
@@ -308,7 +308,7 @@ export default function LandingPage({ onGetStarted }) {
                     <span>{faq.question}</span>
                     <Plus className={`w-4 h-4 text-slate-400 transition-transform duration-250 ${isOpen ? "transform rotate-45 text-blue-500" : ""}`} />
                   </button>
-                  
+
                   {isOpen && (
                     <div className="px-5 pb-5 pt-1 text-[11px] leading-relaxed text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-900/40">
                       {faq.answer}

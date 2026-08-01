@@ -41,12 +41,12 @@ export default function Auth({ onLoginSuccess, onBackToLanding }) {
 
   return (
     <div className="min-h-screen w-full flex bg-slate-50 dark:bg-slate-950 transition-colors duration-200">
-      
+
       {/* LEFT SIDE - Authentic Login Form */}
       <div className="flex-1 flex flex-col justify-center items-center px-6 py-12 md:px-12 lg:px-20 z-10 bg-white dark:bg-slate-950 border-r border-slate-200/60 dark:border-slate-900/60 relative">
-        
+
         {/* Back navigation button */}
-        <button 
+        <button
           onClick={onBackToLanding}
           className="absolute top-6 left-6 text-xs text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center gap-1.5 font-semibold cursor-pointer outline-none select-none transition-colors"
         >
@@ -54,7 +54,7 @@ export default function Auth({ onLoginSuccess, onBackToLanding }) {
         </button>
 
         <div className="w-full max-w-sm flex flex-col gap-6">
-          
+
           {/* Brand Header */}
           <div className="flex flex-col items-center text-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-650 flex items-center justify-center font-bold text-white text-base shadow-sm">
@@ -74,7 +74,7 @@ export default function Auth({ onLoginSuccess, onBackToLanding }) {
           <Card className="border border-slate-200 dark:border-slate-850">
             <CardContent className="flex flex-col gap-4 p-6">
               <form onSubmit={handleSubmit} className="flex flex-col gap-4.5">
-                
+
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[10px] font-bold text-slate-550 dark:text-slate-400 tracking-wider uppercase px-0.5">
                     Email Address
@@ -129,9 +129,9 @@ export default function Auth({ onLoginSuccess, onBackToLanding }) {
                 {/* Remember Me Option */}
                 <div className="flex items-center justify-between px-0.5 text-xs select-none">
                   <label className="flex items-center gap-2 cursor-pointer font-medium text-slate-655 dark:text-slate-400">
-                    <input 
-                      type="checkbox" 
-                      checked={rememberMe} 
+                    <input
+                      type="checkbox"
+                      checked={rememberMe}
                       onChange={(e) => setRememberMe(e.target.checked)}
                       className="rounded border-slate-300 dark:border-slate-800 text-blue-600 focus:ring-blue-500 w-3.5 h-3.5 cursor-pointer"
                     />
@@ -158,15 +158,15 @@ export default function Auth({ onLoginSuccess, onBackToLanding }) {
                   <div className="h-[1px] bg-slate-200 dark:bg-slate-900 flex-1"></div>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={(e) => e.preventDefault()}
                     className="flex justify-center items-center gap-2 py-2 border border-slate-200 dark:border-slate-850 rounded-lg text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-900 transition-all cursor-pointer"
                   >
                     Google
                   </button>
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={(e) => e.preventDefault()}
                     className="flex justify-center items-center gap-2 py-2 border border-slate-200 dark:border-slate-850 rounded-lg text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-900 transition-all cursor-pointer"
                   >
@@ -190,18 +190,18 @@ export default function Auth({ onLoginSuccess, onBackToLanding }) {
 
       {/* RIGHT SIDE - Large AI Vector Graphic */}
       <div className="hidden lg:flex flex-1 bg-gradient-to-tr from-slate-900 to-indigo-950 flex-col justify-center items-center p-12 text-white relative overflow-hidden">
-        
+
         {/* Abstract vector backgrounds */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-500/10 via-transparent to-transparent"></div>
-        
+
         <div className="max-w-md w-full flex flex-col gap-6 text-center z-10 select-none">
-          
+
           <div className="flex justify-center">
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-650 flex items-center justify-center font-bold text-white text-3xl shadow-lg border border-white/10">
               K
             </div>
           </div>
-          
+
           <div>
             <h2 className="text-xl font-bold tracking-tight text-white mb-2">Neural Ingestion Pipeline</h2>
             <p className="text-xs text-slate-350 leading-relaxed max-w-sm mx-auto">
@@ -234,7 +234,7 @@ export default function Auth({ onLoginSuccess, onBackToLanding }) {
               <Cpu className="w-8 h-8 text-blue-400 animate-pulse" />
             </div>
           </div>
-          
+
         </div>
       </div>
 

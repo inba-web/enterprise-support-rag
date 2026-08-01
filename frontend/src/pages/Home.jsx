@@ -46,8 +46,8 @@ export default function Home({ user, onSignOut }) {
     const handleHashChange = () => {
       const hash = window.location.hash.replace("#/", "");
       const validPages = [
-        "overview", "knowledge", "chat", "analytics", 
-        "documents", "collections", "users", "settings", 
+        "overview", "knowledge", "chat", "analytics",
+        "documents", "collections", "users", "settings",
         "profile", "support"
       ];
       if (validPages.includes(hash)) {
@@ -113,12 +113,11 @@ export default function Home({ user, onSignOut }) {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex transition-colors duration-200">
-      
+
       {/* 1. LEFT COLLAPSIBLE SIDEBAR */}
-      <aside 
-        className={`hidden md:flex flex-col bg-white dark:bg-slate-950 border-r border-slate-200/80 dark:border-slate-850 transition-all duration-300 relative shrink-0 ${
-          isSidebarCollapsed ? "w-16" : "w-60"
-        }`}
+      <aside
+        className={`hidden md:flex flex-col bg-white dark:bg-slate-950 border-r border-slate-200/80 dark:border-slate-850 transition-all duration-300 relative shrink-0 ${isSidebarCollapsed ? "w-16" : "w-60"
+          }`}
       >
         {/* Brand Header */}
         <div className="h-16 flex items-center justify-between px-4 border-b border-slate-100 dark:border-slate-900">
@@ -152,11 +151,10 @@ export default function Home({ user, onSignOut }) {
                   <button
                     key={item.id}
                     onClick={() => navigateTo(item.id)}
-                    className={`w-full text-left px-3 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-3 border border-transparent cursor-pointer ${
-                      isActive
+                    className={`w-full text-left px-3 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-3 border border-transparent cursor-pointer ${isActive
                         ? "bg-slate-100/90 text-slate-950 dark:bg-slate-900/60 dark:text-white border-slate-200/50 dark:border-slate-800/40 shadow-sm"
                         : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-50/50 dark:hover:bg-slate-900/10"
-                    }`}
+                      }`}
                     title={isSidebarCollapsed ? item.label : ""}
                   >
                     <span className={`shrink-0 ${isActive ? "text-blue-500 dark:text-blue-400" : ""}`}>
@@ -198,10 +196,10 @@ export default function Home({ user, onSignOut }) {
 
       {/* 2. RIGHT CONTENT CONTAINER AREA */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
-        
+
         {/* TOP NAVBAR */}
         <header className="sticky top-0 z-30 h-16 w-full border-b border-slate-200/60 dark:border-slate-850 bg-white/70 dark:bg-slate-950/70 backdrop-blur-md flex items-center justify-between px-4 sm:px-6 lg:px-8">
-          
+
           {/* Left section: Workspace Selector */}
           <div className="flex items-center gap-3">
             <select
@@ -228,7 +226,7 @@ export default function Home({ user, onSignOut }) {
 
           {/* Right section: Actions & Status */}
           <div className="flex items-center gap-3">
-            
+
             {/* Status Indicator */}
             <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-emerald-500/20 bg-emerald-500/5 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold">
               <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
@@ -237,7 +235,7 @@ export default function Home({ user, onSignOut }) {
 
             {/* Notifications panel bell */}
             <div className="relative">
-              <button 
+              <button
                 onClick={() => setNotificationsOpen(!notificationsOpen)}
                 className="p-2 rounded-xl border border-slate-200/60 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 text-slate-500 dark:text-slate-400 transition-all cursor-pointer relative"
               >
@@ -308,7 +306,7 @@ export default function Home({ user, onSignOut }) {
                         <span className="text-xs font-bold truncate capitalize">{parsedName}</span>
                         <span className="text-[10px] text-slate-400 truncate mt-0.5">{user?.email}</span>
                       </div>
-                      
+
                       <button
                         onClick={() => navigateTo("profile")}
                         className="w-full text-left px-3 py-2 text-xs text-slate-550 hover:text-slate-950 dark:text-slate-400 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-900/50 rounded-lg font-semibold flex items-center gap-2 cursor-pointer"
@@ -322,9 +320,9 @@ export default function Home({ user, onSignOut }) {
                       >
                         <SettingsIcon className="w-3.5 h-3.5" /> System Settings
                       </button>
-                      
+
                       <div className="border-t border-slate-100 dark:border-slate-900 my-1.5"></div>
-                      
+
                       <button
                         onClick={onSignOut}
                         className="w-full text-left px-3 py-2 text-xs text-rose-500 hover:text-rose-600 hover:bg-rose-500/5 rounded-lg font-bold flex items-center gap-2 cursor-pointer"
@@ -353,9 +351,8 @@ export default function Home({ user, onSignOut }) {
               <button
                 key={item.id}
                 onClick={() => navigateTo(item.id)}
-                className={`flex flex-col items-center gap-1 py-1 px-3 rounded-lg cursor-pointer ${
-                  isActive ? "text-blue-500 dark:text-blue-400" : "text-slate-400 dark:text-slate-500"
-                }`}
+                className={`flex flex-col items-center gap-1 py-1 px-3 rounded-lg cursor-pointer ${isActive ? "text-blue-500 dark:text-blue-400" : "text-slate-400 dark:text-slate-500"
+                  }`}
               >
                 <span>{item.icon}</span>
                 <span className="text-[9px]">{item.label}</span>
@@ -380,7 +377,7 @@ export default function Home({ user, onSignOut }) {
               {activePage === "knowledge" && <KnowledgeBase />}
               {activePage === "settings" && <Settings />}
               {activePage === "profile" && <Profile user={user} />}
-              
+
               {/* Extra Redesigned Sections (To fulfill user's detailed enterprise tabs checklist) */}
               {activePage === "analytics" && (
                 <div className="flex flex-col gap-6 w-full">

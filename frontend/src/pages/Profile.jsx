@@ -8,7 +8,7 @@ export default function Profile({ user = { name: "john.doe", email: "john.doe@co
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-2xl mx-auto">
-      
+
       {/* Title Header */}
       <div>
         <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
@@ -20,7 +20,7 @@ export default function Profile({ user = { name: "john.doe", email: "john.doe@co
       </div>
 
       <div className="flex flex-col gap-6">
-        
+
         {/* Profile Card Summary */}
         <Card className="border border-slate-200 dark:border-slate-850">
           <CardContent className="p-6 flex flex-col sm:flex-row items-center gap-5">
@@ -28,7 +28,7 @@ export default function Profile({ user = { name: "john.doe", email: "john.doe@co
             <div className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center font-extrabold text-slate-700 dark:text-slate-300 text-lg shadow-inner shrink-0 select-none">
               {initial}
             </div>
-            
+
             <div className="flex-1 min-w-0 text-center sm:text-left">
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-1">
                 <h3 className="text-sm font-bold text-slate-900 dark:text-white capitalize truncate">
@@ -53,7 +53,7 @@ export default function Profile({ user = { name: "john.doe", email: "john.doe@co
             </div>
 
             <div className="flex flex-col gap-3 border-t border-slate-100 dark:border-slate-900 pt-4 text-xs">
-              
+
               <div className="flex items-center justify-between py-1.5 border-b border-slate-50 dark:border-slate-900/40">
                 <span className="font-medium text-slate-400 dark:text-slate-500">Security Clearance</span>
                 <span className="font-bold text-slate-800 dark:text-slate-200">Level 4 (Owner)</span>

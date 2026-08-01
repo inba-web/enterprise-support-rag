@@ -3,14 +3,14 @@ import axios from "axios";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import Card, { CardContent, CardHeader } from "../components/ui/Card";
 import Badge from "../components/ui/Badge";
-import { 
-  FileText, 
-  Search, 
-  Cpu, 
-  FolderTree, 
-  Upload, 
-  MessageSquare, 
-  Activity, 
+import {
+  FileText,
+  Search,
+  Cpu,
+  FolderTree,
+  Upload,
+  MessageSquare,
+  Activity,
   ArrowUpRight,
   TrendingUp,
   Sparkles,
@@ -49,7 +49,7 @@ export default function Overview() {
       try {
         const response = await axios.get("http://localhost:5000/api/documents");
         const docs = response.data;
-        
+
         // Calculate mock embedding count: roughly 4 chunks per doc
         const docsCount = docs.length;
         const processedDocs = docs.filter(d => d.status === "processed").length;
@@ -82,7 +82,7 @@ export default function Overview() {
 
   return (
     <div className="flex flex-col gap-6 w-full">
-      
+
       {/* 1. Header welcome */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -98,7 +98,7 @@ export default function Overview() {
 
       {/* 2. KPI Stats Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        
+
         {/* Card 1: Documents Indexed */}
         <Card className="hover:border-slate-300 dark:hover:border-slate-800 transition-all duration-300">
           <CardContent className="p-5 flex flex-col justify-between h-28">
@@ -185,21 +185,21 @@ export default function Overview() {
             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorQueries" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#4F46E5" stopOpacity={0.2}/>
-                  <stop offset="95%" stopColor="#4F46E5" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#4F46E5" stopOpacity={0.2} />
+                  <stop offset="95%" stopColor="#4F46E5" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" className="dark:stroke-slate-900" />
               <XAxis dataKey="day" tick={{ fontSize: 9, fill: "#94A3B8" }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 9, fill: "#94A3B8" }} axisLine={false} tickLine={false} />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: "hsl(var(--card))", 
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "hsl(var(--card))",
                   borderColor: "hsl(var(--border))",
                   borderRadius: "8px",
                   fontSize: "11px",
                   color: "inherit"
-                }} 
+                }}
               />
               <Area type="monotone" dataKey="queries" stroke="#4F46E5" strokeWidth={2} fillOpacity={1} fill="url(#colorQueries)" />
             </AreaChart>
@@ -209,7 +209,7 @@ export default function Overview() {
 
       {/* 4. Live Activity Timeline & Ingestion Queue */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
+
         {/* Left Side: Recent Upload Ingestion Queue */}
         <Card className="lg:col-span-2">
           <CardHeader className="flex items-center justify-between px-6 pt-5 pb-3">
@@ -225,8 +225,8 @@ export default function Overview() {
                 </div>
               ) : (
                 recentUploads.map((doc) => (
-                  <div 
-                    key={doc._id} 
+                  <div
+                    key={doc._id}
                     className="flex items-center justify-between p-3.5 rounded-xl border border-slate-200/50 dark:border-slate-850 bg-slate-50/20 dark:bg-slate-950/20"
                   >
                     <div className="flex items-center gap-3 min-w-0">
@@ -260,9 +260,8 @@ export default function Overview() {
             <div className="flex flex-col gap-5 relative before:absolute before:left-2 before:top-2 before:bottom-2 before:w-[1.5px] before:bg-slate-100 dark:before:bg-slate-850">
               {activityTimeline.map((log) => (
                 <div key={log.id} className="flex gap-4 relative">
-                  <div className={`w-4 h-4 rounded-full border border-white dark:border-slate-950 flex items-center justify-center shrink-0 z-10 ${
-                    log.status === "success" ? "bg-emerald-500" : log.status === "danger" ? "bg-rose-500" : "bg-amber-500"
-                  }`}>
+                  <div className={`w-4 h-4 rounded-full border border-white dark:border-slate-950 flex items-center justify-center shrink-0 z-10 ${log.status === "success" ? "bg-emerald-500" : log.status === "danger" ? "bg-rose-500" : "bg-amber-500"
+                    }`}>
                     <span className="w-1.5 h-1.5 bg-white rounded-full"></span>
                   </div>
                   <div className="flex flex-col min-w-0">
