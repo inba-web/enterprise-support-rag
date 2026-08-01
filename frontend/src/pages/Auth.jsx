@@ -44,12 +44,12 @@ export default function Auth({ onLoginSuccess }) {
         
         {/* Brand Header */}
         <div className="flex flex-col items-center text-center gap-2">
-          <div className="w-10 h-10 rounded-xl bg-slate-900 dark:bg-slate-50 flex items-center justify-center font-bold text-white dark:text-slate-900 text-lg shadow-sm">
-            Ω
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-650 to-blue-500 dark:from-indigo-500 dark:to-cyan-400 flex items-center justify-center font-bold text-white text-lg shadow-sm">
+            S
           </div>
           <div>
             <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-50 tracking-tight">
-              Antigravity AI Console
+              SyncVantage AI Console
             </h1>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
               Sign in to manage helpdesks and RAG knowledge bases

@@ -38,7 +38,7 @@ function Message({ message }) {
         {/* Sender Name & Meta details */}
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold text-slate-800 dark:text-slate-200 tracking-tight">
-            {isUser ? "You" : "Antigravity Assistant"}
+            {isUser ? "You" : "SyncVantage Assistant"}
           </span>
           <span className="text-[10px] text-slate-400 dark:text-slate-500">
             {message.timestamp || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}

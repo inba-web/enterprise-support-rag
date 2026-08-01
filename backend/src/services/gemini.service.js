@@ -30,8 +30,11 @@ export const getEmbedding = async (text) => {
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: "text-embedding-004" });
-    const result = await model.embedContent(text);
+    const model = genAI.getGenerativeModel({ model: "gemini-embedding-001" });
+    const result = await model.embedContent({
+      content: { parts: [{ text }] },
+      outputDimensionality: 768
+    });
     
     if (result && result.embedding && result.embedding.values) {
       return result.embedding.values;
@@ -51,7 +54,7 @@ export const generateRAGAnswer = async (context, question) => {
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
 
     const systemPrompt = `You are a professional and friendly AI Customer Support Assistant.
 Your objective is to answer the user's question accurately using ONLY the provided context blocks.

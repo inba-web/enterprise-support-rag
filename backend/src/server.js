@@ -1,13 +1,18 @@
 import dotenv from "dotenv";
-import app from "./app.js";
-import connectDB from "./config/db.js";
-import { initializePineconeIndex } from "./services/pinecone.service.js";
 
-// Load environment variables (from backend/.env if available)
+// ✅ Load environment variables FIRST before any other imports.
+// In ESM, static `import` statements are hoisted and evaluated before
+// any code runs, so `dotenv.config()` must execute before other modules
+// (which read process.env at module-load time) are imported.
 dotenv.config();
 
+// Now safe to dynamically import modules that read process.env at load time
+const { default: app } = await import("./app.js");
+const { default: connectDB } = await import("./config/db.js");
+const { initializePineconeIndex } = await import("./services/pinecone.service.js");
+
 // Connect to MongoDB
-connectDB();
+await connectDB();
 
 // Initialize Pinecone Vector DB Index
 initializePineconeIndex();

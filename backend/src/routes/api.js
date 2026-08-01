@@ -20,7 +20,7 @@ router.get("/health", (req, res) => {
     timestamp: new Date(),
     uptime: process.uptime(),
     database: {
-      status: statusMapping[dbStatus] || "unknown",
+      status: global.useLocalDB ? "local_fallback" : (statusMapping[dbStatus] || "unknown"),
       code: dbStatus
     }
   });
