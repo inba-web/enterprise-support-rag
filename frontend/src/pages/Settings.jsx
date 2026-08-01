@@ -15,7 +15,7 @@ export default function Settings() {
     indexName: localStorage.getItem("DEMO_INDEX_NAME") || "ai-support-assistant"
   });
 
-  const [activeModel, setActiveModel] = useState("gemini-1.5-flash");
+  const [activeModel, setActiveModel] = useState("gemini-3.5-flash");
   const [saved, setSaved] = useState(false);
 
   // Sync theme changes with DOM
@@ -142,8 +142,9 @@ export default function Settings() {
                 onChange={(e) => setActiveModel(e.target.value)}
                 className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 dark:text-slate-100 outline-none"
               >
-                <option value="gemini-1.5-flash">Gemini 1.5 Flash (Default)</option>
-                <option value="gemini-1.5-pro">Gemini 1.5 Pro (Analytical)</option>
+                <option value="gemini-3.5-flash">Gemini 3.5 Flash (Default)</option>
+                <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+                <option value="gemini-2.5-pro">Gemini 2.5 Pro (Analytical)</option>
               </select>
             </div>
           </CardContent>

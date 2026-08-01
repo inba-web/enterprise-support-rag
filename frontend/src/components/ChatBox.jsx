@@ -29,6 +29,7 @@ export default function ChatBox() {
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [isSimulatedMode, setIsSimulatedMode] = useState(false);
+  const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const [showRating, setShowRating] = useState(false);
   const [rating, setRating] = useState(0);
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
@@ -251,6 +252,13 @@ To reset your console passwords:
         {/* Chat Console Header */}
         <div className="px-5 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowMobileSidebar(true)}
+              className="md:hidden p-1.5 -ml-1 rounded-lg border border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-900 cursor-pointer"
+              title="View Chat Sessions"
+            >
+              📂
+            </button>
             <span className="text-xs font-bold text-slate-800 dark:text-slate-200">SyncVantage AI Agent</span>
             <Badge variant="default" className="text-[9px] px-1.5 py-0 font-medium">Gemini 3.5 Flash</Badge>
           </div>
@@ -427,6 +435,58 @@ To reset your console passwords:
 
         </div>
       </div>
+
+      {/* Mobile Drawer Overlay */}
+      <AnimatePresence>
+        {showMobileSidebar && (
+          <>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.4 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowMobileSidebar(false)}
+              className="fixed inset-0 bg-black z-30 md:hidden"
+            />
+            <motion.div
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "tween", duration: 0.2 }}
+              className="fixed inset-y-0 left-0 w-64 bg-white dark:bg-slate-950 border-r border-slate-200 dark:border-slate-800 z-40 flex flex-col p-4 md:hidden"
+            >
+              <div className="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-900 mb-4">
+                <span className="text-xs font-bold uppercase text-slate-400 tracking-wider">Sessions</span>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={() => { createNewChat(); setShowMobileSidebar(false); }} className="px-2 h-7 font-bold">
+                    + New
+                  </Button>
+                  <button onClick={() => setShowMobileSidebar(false)} className="text-slate-400 text-sm p-1">✕</button>
+                </div>
+              </div>
+              <div className="flex-1 overflow-y-auto flex flex-col gap-1.5 custom-scrollbar">
+                {conversations.map((conv) => (
+                  <button
+                    key={conv.id}
+                    onClick={() => { selectConversation(conv.id); setShowMobileSidebar(false); }}
+                    className={`text-left p-3 rounded-lg transition-all border ${
+                      activeConvId === conv.id
+                        ? "bg-slate-50 dark:bg-slate-900 border-slate-250 dark:border-slate-800 shadow-[0_1px_2px_0_rgba(0,0,0,0.02)]"
+                        : "border-transparent hover:bg-slate-50 dark:hover:bg-slate-900/50"
+                    }`}
+                  >
+                    <span className="text-xs font-semibold text-slate-800 dark:text-slate-250 block truncate">
+                      {conv.title}
+                    </span>
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500 block truncate mt-0.5">
+                      {conv.summary}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
     </div>
   );
