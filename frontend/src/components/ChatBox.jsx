@@ -16,7 +16,8 @@ import {
   CornerDownLeft,
   X,
   History,
-  Volume2
+  Volume2,
+  VolumeX
 } from "lucide-react";
 
 const API_URL = "http://localhost:5000/api/chat";
@@ -50,16 +51,162 @@ export default function ChatBox() {
   const [isVoiceActive, setIsVoiceActive] = useState(false);
   const [attachedFile, setAttachedFile] = useState(null);
 
+  // Audio response states
+  const [speakingMsgIndex, setSpeakingMsgIndex] = useState(null);
+  const [speechSentences, setSpeechSentences] = useState([]);
+  const [currentSentenceIdx, setCurrentSentenceIdx] = useState(0);
+  const [isSpeechPaused, setIsSpeechPaused] = useState(false);
+  const [autoPlayVoice, setAutoPlayVoice] = useState(() => {
+    const saved = localStorage.getItem("autoPlayVoice");
+    return saved !== null ? JSON.parse(saved) : false;
+  });
+
   const messagesEndRef = useRef(null);
   const recognitionRef = useRef(null);
+
+  useEffect(() => {
+    localStorage.setItem("autoPlayVoice", JSON.stringify(autoPlayVoice));
+  }, [autoPlayVoice]);
 
   useEffect(() => {
     return () => {
       if (recognitionRef.current) {
         recognitionRef.current.stop();
       }
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
     };
   }, []);
+
+  const splitIntoSentences = (text) => {
+    const plainText = text
+      .replace(/#{1,6}\s?/g, '')
+      .replace(/\*\*|__/g, '')
+      .replace(/\*|_/g, '')
+      .replace(/`{1,3}[^`]*`{1,3}/g, '')
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1')
+      .replace(/[-*+]\s/g, '')
+      .trim();
+
+    // Split by sentence endings (. ! ?) followed by space or line ending, ignoring decimal points
+    const sentenceRegex = /[^.!?\s][^.!?]*(?:[.!?]+(?!\d(?:\s|$))|(?=\s|$))/g;
+    const matches = plainText.match(sentenceRegex) || [];
+    return matches.map(s => s.trim()).filter(s => s.length > 0);
+  };
+
+  const stopSpeaking = () => {
+    if (window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
+    setSpeakingMsgIndex(null);
+    setSpeechSentences([]);
+    setCurrentSentenceIdx(0);
+    setIsSpeechPaused(false);
+  };
+
+  const speakSentence = (sentences, index) => {
+    if (!window.speechSynthesis || sentences.length === 0 || index < 0 || index >= sentences.length) {
+      stopSpeaking();
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+    setCurrentSentenceIdx(index);
+    setIsSpeechPaused(false);
+
+    const utterance = new SpeechSynthesisUtterance(sentences[index]);
+
+    // Search for Indian English (en-IN) / Hindi (hi-IN) male voices to match the "Modi" style
+    if (window.speechSynthesis.getVoices) {
+      const voices = window.speechSynthesis.getVoices();
+      
+      // 1. Try Indian English Male
+      let selectedVoice = voices.find(v => 
+        v.lang === "en-IN" && 
+        (v.name.toLowerCase().includes("ravi") || v.name.toLowerCase().includes("rishi") || v.name.toLowerCase().includes("male"))
+      );
+
+      // 2. Try any Indian English voice
+      if (!selectedVoice) {
+        selectedVoice = voices.find(v => v.lang.toLowerCase().includes("in") && v.lang.toLowerCase().startsWith("en"));
+      }
+
+      // 3. Try Hindi voice (Modi native speaker language)
+      if (!selectedVoice) {
+        selectedVoice = voices.find(v => v.lang.toLowerCase().includes("hi"));
+      }
+
+      // 4. Try any Male English voice
+      if (!selectedVoice) {
+        selectedVoice = voices.find(v => v.lang.toLowerCase().startsWith("en") && v.name.toLowerCase().includes("male"));
+      }
+
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+      }
+    }
+
+    utterance.onend = () => {
+      const nextIndex = index + 1;
+      if (nextIndex < sentences.length) {
+        speakSentence(sentences, nextIndex);
+      } else {
+        stopSpeaking();
+      }
+    };
+
+    utterance.onerror = (e) => {
+      if (e.error !== "interrupted" && e.error !== "cancelled") {
+        console.error("Speech synthesis error:", e);
+        stopSpeaking();
+      }
+    };
+
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const handlePlayPauseVoice = (text, index) => {
+    if (!window.speechSynthesis) return;
+
+    if (speakingMsgIndex === index) {
+      if (isSpeechPaused) {
+        setIsSpeechPaused(false);
+        speakSentence(speechSentences, currentSentenceIdx);
+      } else {
+        window.speechSynthesis.cancel();
+        setIsSpeechPaused(true);
+      }
+    } else {
+      window.speechSynthesis.cancel();
+      const parsedSentences = splitIntoSentences(text);
+      if (parsedSentences.length === 0) return;
+
+      setSpeakingMsgIndex(index);
+      setSpeechSentences(parsedSentences);
+      setCurrentSentenceIdx(0);
+      setIsSpeechPaused(false);
+
+      speakSentence(parsedSentences, 0);
+    }
+  };
+
+  const handleSkipForward = () => {
+    if (speechSentences.length === 0) return;
+    const nextIdx = currentSentenceIdx + 1;
+    if (nextIdx < speechSentences.length) {
+      speakSentence(speechSentences, nextIdx);
+    } else {
+      stopSpeaking();
+    }
+  };
+
+  const handleSkipBackward = () => {
+    if (speechSentences.length === 0) return;
+    const prevIdx = currentSentenceIdx - 1;
+    const targetIdx = prevIdx >= 0 ? prevIdx : 0;
+    speakSentence(speechSentences, targetIdx);
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -113,14 +260,23 @@ export default function ChatBox() {
   const triggerReply = (text) => {
     setTimeout(() => {
       setIsTyping(false);
-      setMessages((prev) => [
-        ...prev,
-        {
-          sender: "ai",
-          text,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      
+      const newMsg = {
+        sender: "ai",
+        text,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      setMessages((prev) => {
+        const nextMsgs = [...prev, newMsg];
+        if (autoPlayVoice) {
+          const newIdx = nextMsgs.length - 1;
+          setTimeout(() => {
+            speakText(newMsg.text, newIdx);
+          }, 100);
         }
-      ]);
+        return nextMsgs;
+      });
 
       if (messages.length >= 3) {
         setTimeout(() => setShowRating(true), 800);
@@ -163,6 +319,7 @@ To reset your console passwords:
   };
 
   const selectConversation = (id) => {
+    stopSpeaking();
     setActiveConvId(id);
     const conv = conversations.find(c => c.id === id);
     setMessages([
@@ -177,6 +334,7 @@ To reset your console passwords:
   };
 
   const createNewChat = () => {
+    stopSpeaking();
     const newId = `conv-${Date.now()}`;
     const newConv = {
       id: newId,
@@ -320,9 +478,31 @@ To reset your console passwords:
               Gemini 3.5 Flash
             </Badge>
           </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-            <span className="text-[9px] font-bold text-slate-400 tracking-wider uppercase">Pipeline Active</span>
+          <div className="flex items-center gap-4">
+            {/* Voice Mode Toggle Switch */}
+            <div className="flex items-center gap-2 border border-slate-200/60 dark:border-slate-800 rounded-lg px-2 py-1 bg-slate-50/50 dark:bg-slate-900/10 transition-colors">
+              <span className="text-[9px] font-bold text-slate-455 dark:text-slate-400 uppercase tracking-wider select-none flex items-center gap-1">
+                <Volume2 className="w-3 h-3 text-blue-500 animate-pulse" style={{ animationPlayState: speakingMsgIndex !== null ? "running" : "paused" }} /> Voice Response
+              </span>
+              <button
+                onClick={() => setAutoPlayVoice(!autoPlayVoice)}
+                className={`w-7 h-4 rounded-full p-0.5 transition-colors duration-200 focus:outline-none cursor-pointer ${
+                  autoPlayVoice ? "bg-blue-600" : "bg-slate-200 dark:bg-slate-800"
+                }`}
+                title={autoPlayVoice ? "Auto-play: Enabled" : "Auto-play: Disabled"}
+              >
+                <div
+                  className={`w-3 h-3 rounded-full bg-white shadow-sm transition-transform duration-200 ${
+                    autoPlayVoice ? "translate-x-3" : "translate-x-0"
+                  }`}
+                />
+              </button>
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+              <span className="text-[9px] font-bold text-slate-400 tracking-wider uppercase">Pipeline Active</span>
+            </div>
           </div>
         </div>
 
@@ -347,7 +527,20 @@ To reset your console passwords:
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.12 }}
               >
-                <Message message={msg} />
+                <Message
+                  message={msg}
+                  isSpeaking={speakingMsgIndex === i}
+                  isSpeakingPaused={speakingMsgIndex === i && isSpeechPaused}
+                  speechProgress={
+                    speakingMsgIndex === i
+                      ? { current: currentSentenceIdx + 1, total: speechSentences.length }
+                      : null
+                  }
+                  onPlayPauseVoice={() => handlePlayPauseVoice(msg.text, i)}
+                  onSkipForward={handleSkipForward}
+                  onSkipBackward={handleSkipBackward}
+                  onStopVoice={stopSpeaking}
+                />
               </motion.div>
             ))}
           </AnimatePresence>
