@@ -9,7 +9,7 @@
 ## 🚀 Key Features
 
 *   **⚡ Live RAG (Retrieval-Augmented Generation)**: Upload product manuals, custom user guides, or FAQs to inject real-time context directly into LLM support conversations.
-*   **🎙️ Integrated Voice Speech Assistant**: Transcribe audio queries in real-time directly inside the AI console with floating waveform feedback.
+*   **🎙️ Integrated Voice & Audio Response Player**: Transcribe audio queries in real-time with waveform feedback, and listen to AI answers read aloud via an interactive sentence-level media controller (Play/Pause, Skip Forward/Backward) voiced in an Indian male vocal profile.
 *   **🧠 Dual Model Intelligence**:
     *   **Embeddings**: Powered by `gemini-embedding-001` (optimized to `768` dimensions).
     *   **Generation**: Powered by the advanced `gemini-3.5-flash` model, ensuring fast response times and low-latency.
@@ -56,17 +56,28 @@ graph TD
 
 ---
 
-## 🎙️ Integrated Voice Speech Assistant
+## 🎙️ Integrated Voice & Audio Response Assistant
 
-The AI Chat interface features a native Voice Assistant powered by the browser's Web Speech API:
+The AI Chat interface features full voice capability, supporting both client-side voice recognition (speech-to-text) and AI voice synthesis (text-to-speech) powered by the Web Speech API:
 
-*   **Technology**: Uses standard `window.SpeechRecognition` (and `window.webkitSpeechRecognition` fallback) to perform client-side voice-to-text translation.
+### 🎤 Voice Input (Speech-to-Text)
+*   **Technology**: Uses standard `window.SpeechRecognition` (and `window.webkitSpeechRecognition` fallback) to transcribe user voice input locally.
 *   **Microphone Handlers**: Handles active recording overlays and animates an interactive floating waveform indicator representing audio input levels.
-*   **Flow**:
+*   **Workflow**:
     1. Clicking the microphone button requests browser audio permissions.
     2. Real-time audio streams are transcribed locally.
     3. The speech result populates the chat input field, allowing instant submissions.
-*   **Browser Compatibility**: Native support across Google Chrome, Microsoft Edge, and Apple Safari. Falls back gracefully to simulation buttons if microphone blocks are active.
+
+### 🔊 Audio Responses & Media Player (Text-to-Speech)
+*   **Modi Voice Engine**: Searches for and prioritizes Indian English (`en-IN`) / Hindi (`hi-IN`) male voices (such as Microsoft Ravi, Microsoft Hemant, or Apple Rishi) to approximate an Indian male speaking style.
+*   **Advanced Media Controls**: Active responses display a dedicated control panel:
+    *   **Play/Pause**: Toggle to halt or resume speaking. Playback is paused at the sentence level to avoid browser speechSynthesis bugs.
+    *   **Skip Forward / Skip Backward**: Instantly jump to the next or previous sentence in the response text.
+    *   **Stop**: Silence all speech output and clear state.
+*   **Sentence-Level Splitting**: Text is split into semantic sentences (ignoring numeric decimals) to enable robust playback control.
+*   **Progress Indicator & Progress Bar**: Renders a progress bar showing `(current sentence / total sentences) * 100` progress, along with a "Sentence X of Y" counter text.
+*   **Global Auto-Play (Voice Response)**: A header-mounted toggle switch lets users enable automatic reading of all new AI responses. Selection is cached in `localStorage`.
+*   **Browser Compatibility**: Full native support across Google Chrome, Apple Safari, Microsoft Edge, and modern Chromium-based browsers. Gracefully falls back to default system voice when no Indian-accented voices are available.
 
 ---
 
