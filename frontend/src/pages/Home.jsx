@@ -47,9 +47,7 @@ export default function Home({ user, onSignOut }) {
     const handleHashChange = () => {
       const hash = window.location.hash.replace("#/", "");
       const validPages = [
-        "overview", "knowledge", "chat", "analytics",
-        "documents", "collections", "users", "settings",
-        "profile", "support"
+        "overview", "chat", "documents", "analytics", "settings", "profile"
       ];
       if (validPages.includes(hash)) {
         setActivePage(hash);
@@ -86,28 +84,18 @@ export default function Home({ user, onSignOut }) {
   // Sidebar items grouped by section
   const sidebarItems = [
     {
-      group: "Core Workspace",
+      group: "Core Systems",
       items: [
-        { id: "overview", label: "Dashboard", icon: <LayoutDashboard className="w-4 h-4" /> },
-        { id: "knowledge", label: "Knowledge Hub", icon: <Database className="w-4 h-4" /> },
-        { id: "chat", label: "AI Console", icon: <MessageSquare className="w-4 h-4" /> },
-        { id: "analytics", label: "Analytics", icon: <BarChart3 className="w-4 h-4" /> }
+        { id: "overview", label: "Overview", icon: <LayoutDashboard className="w-4 h-4" /> },
+        { id: "chat", label: "Ask THEDAL", icon: <MessageSquare className="w-4 h-4" /> },
+        { id: "documents", label: "Documents Library", icon: <Files className="w-4 h-4" /> }
       ]
     },
     {
-      group: "Management",
+      group: "Diagnostics",
       items: [
-        { id: "documents", label: "Documents", icon: <Files className="w-4 h-4" /> },
-        { id: "collections", label: "Collections", icon: <FolderTree className="w-4 h-4" /> },
-        { id: "users", label: "Users & Teams", icon: <Users className="w-4 h-4" /> }
-      ]
-    },
-    {
-      group: "Preferences",
-      items: [
-        { id: "settings", label: "System Config", icon: <SettingsIcon className="w-4 h-4" /> },
-        { id: "profile", label: "Profile Settings", icon: <User className="w-4 h-4" /> },
-        { id: "support", label: "Help & Support", icon: <HelpCircle className="w-4 h-4" /> }
+        { id: "analytics", label: "System Analytics", icon: <BarChart3 className="w-4 h-4" /> },
+        { id: "settings", label: "Platform Configurations", icon: <SettingsIcon className="w-4 h-4" /> }
       ]
     }
   ];
@@ -341,8 +329,8 @@ export default function Home({ user, onSignOut }) {
         <div className="md:hidden border-b border-slate-200/60 dark:border-slate-850 bg-white dark:bg-slate-950 px-4 py-2 flex items-center justify-around text-xs font-semibold transition-all">
           {[
             { id: "overview", icon: <LayoutDashboard className="w-4 h-4" />, label: "Overview" },
-            { id: "knowledge", icon: <Database className="w-4 h-4" />, label: "Knowledge" },
-            { id: "chat", icon: <MessageSquare className="w-4 h-4" />, label: "AI Console" },
+            { id: "chat", icon: <MessageSquare className="w-4 h-4" />, label: "Ask THEDAL" },
+            { id: "documents", icon: <Files className="w-4 h-4" />, label: "Documents" },
             { id: "settings", icon: <SettingsIcon className="w-4 h-4" />, label: "Settings" }
           ].map((item) => {
             const isActive = activePage === item.id;
@@ -373,11 +361,10 @@ export default function Home({ user, onSignOut }) {
             >
               {activePage === "overview" && <Overview />}
               {activePage === "chat" && <ChatBox />}
-              {activePage === "knowledge" && <KnowledgeBase />}
+              {activePage === "documents" && <KnowledgeBase />}
               {activePage === "settings" && <Settings />}
               {activePage === "profile" && <Profile user={user} />}
 
-              {/* Extra Redesigned Sections (To fulfill user's detailed enterprise tabs checklist) */}
               {activePage === "analytics" && (
                 <div className="flex flex-col gap-6 w-full">
                   <div>
@@ -408,115 +395,6 @@ export default function Home({ user, onSignOut }) {
                           <span className="text-xs font-semibold">Real-time Telemetry Processing</span>
                           <p className="text-[10px] text-slate-400">Telemetry graphing and system analytics load dynamically from API pipelines.</p>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              )}
-
-              {activePage === "documents" && (
-                <div className="flex flex-col gap-6 w-full">
-                  <div>
-                    <h2 className="text-xl font-bold tracking-tight">System Documents Catalog</h2>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Explore all document vectors, metadata fields, and chunk segments.</p>
-                  </div>
-                  <KnowledgeBase />
-                </div>
-              )}
-
-              {activePage === "collections" && (
-                <div className="flex flex-col gap-6 w-full">
-                  <div>
-                    <h2 className="text-xl font-bold tracking-tight">Knowledge Collections</h2>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Organize document chunks into logical partitions for specific support queues.</p>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {[
-                      { name: "General Helpdesk FAQ", count: 12, desc: "Default collections for customer support pricing and service enquiries." },
-                      { name: "Technical API Manuals", count: 4, desc: "API documentation indices and developer troubleshooting guides." },
-                      { name: "Product Catalog Specs", count: 8, desc: "Inventory spec sheets, sizing guides, and return policies." }
-                    ].map((col, idx) => (
-                      <Card key={idx}>
-                        <CardContent className="p-6 flex flex-col gap-4">
-                          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500/10 to-blue-500/10 text-indigo-650 dark:text-cyan-400 border border-slate-200/40 dark:border-slate-800 flex items-center justify-center">
-                            <FolderTree className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <div className="flex justify-between items-center">
-                              <span className="text-sm font-bold">{col.name}</span>
-                              <Badge variant="default" className="text-[10px] font-bold">{col.count} files</Badge>
-                            </div>
-                            <p className="text-[11px] text-slate-450 mt-2 leading-relaxed">{col.desc}</p>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {activePage === "users" && (
-                <div className="flex flex-col gap-6 w-full">
-                  <div>
-                    <h2 className="text-xl font-bold tracking-tight">Users & Workspace Authorization</h2>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Manage team privileges, workspace invite tokens, and security clearance logs.</p>
-                  </div>
-                  <Card>
-                    <CardContent className="p-0 overflow-x-auto">
-                      <table className="w-full text-left text-xs border-collapse">
-                        <thead>
-                          <tr className="border-b border-slate-100 dark:border-slate-850/80 text-slate-400 font-semibold text-[10px] uppercase tracking-wider bg-slate-50/50 dark:bg-slate-900/10">
-                            <th className="p-4">Name</th>
-                            <th className="p-4">Role</th>
-                            <th className="p-4">Cleared</th>
-                            <th className="p-4">Last Active</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-100 dark:divide-slate-900/40 text-slate-700 dark:text-slate-300">
-                          <tr className="hover:bg-slate-50/30 dark:hover:bg-slate-900/10">
-                            <td className="p-4 font-bold capitalize">{parsedName}</td>
-                            <td className="p-4">Owner</td>
-                            <td className="p-4"><Badge variant="success" className="text-[9px]">Active</Badge></td>
-                            <td className="p-4 text-slate-450">Just now</td>
-                          </tr>
-                          <tr className="hover:bg-slate-50/30 dark:hover:bg-slate-900/10">
-                            <td className="p-4 font-bold">Support Agent A</td>
-                            <td className="p-4">Editor</td>
-                            <td className="p-4"><Badge variant="default" className="text-[9px]">Cleared</Badge></td>
-                            <td className="p-4 text-slate-450">2 hours ago</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </CardContent>
-                  </Card>
-                </div>
-              )}
-
-              {activePage === "support" && (
-                <div className="flex flex-col gap-6 w-full max-w-2xl mx-auto">
-                  <div>
-                    <h2 className="text-xl font-bold tracking-tight">Enterprise Help Desk</h2>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Submit support tickets directly to our engineering teams.</p>
-                  </div>
-                  <Card>
-                    <CardContent className="p-6 flex flex-col gap-4">
-                      <div className="flex items-start gap-3 p-4 rounded-xl border border-blue-500/20 bg-blue-500/5 text-blue-600 dark:text-blue-400 text-xs">
-                        <Info className="w-5 h-5 shrink-0 mt-0.5" />
-                        <div>
-                          <strong>24/7 SLA Guarantee</strong>
-                          <p className="text-slate-450 mt-1 leading-normal">As an enterprise tier workspace owner, you have a guaranteed 1-hour developer response window for critical support queries.</p>
-                        </div>
-                      </div>
-                      <div className="flex flex-col gap-1.5 mt-2">
-                        <label className="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Support Query Title</label>
-                        <input type="text" placeholder="e.g. Pinecone vector match error" className="bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 text-xs outline-none" />
-                      </div>
-                      <div className="flex flex-col gap-1.5">
-                        <label className="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Detailed Description</label>
-                        <textarea rows={4} placeholder="Describe the issue you are experiencing..." className="bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 text-xs outline-none resize-none"></textarea>
-                      </div>
-                      <div className="flex justify-end mt-2">
-                        <Button variant="default" size="sm" className="font-bold text-xs">Submit Ticket</Button>
                       </div>
                     </CardContent>
                   </Card>

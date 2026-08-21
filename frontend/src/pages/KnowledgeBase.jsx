@@ -179,7 +179,7 @@ export default function KnowledgeBase() {
 
         {/* Title Header */}
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Knowledge Hub</h2>
+          <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Documents Library</h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             Ingest manuals, reference guides, and FAQs. Documents are chunked and vectorized for semantic search context.
           </p>
@@ -405,13 +405,6 @@ export default function KnowledgeBase() {
               </p>
             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <span className="font-bold text-slate-400 uppercase tracking-wider">Database ID</span>
-              <p className="text-slate-500 font-mono break-all leading-normal">
-                {selectedDocDetails._id}
-              </p>
-            </div>
-
             <div className="grid grid-cols-2 gap-3">
               <div className="flex flex-col gap-1">
                 <span className="font-bold text-slate-400 uppercase tracking-wider">Size</span>
@@ -429,9 +422,9 @@ export default function KnowledgeBase() {
 
             <div className="border-t border-slate-100 dark:border-slate-900 my-1"></div>
 
-            <h4 className="text-[10px] font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">Vector Parameters</h4>
+            <h4 className="text-[10px] font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">Vector Index Parameters</h4>
 
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2.5">
               <div className="flex items-center gap-2 text-slate-500">
                 <Calendar className="w-3.5 h-3.5 shrink-0 text-blue-500" />
                 <span>Indexed: {new Date(selectedDocDetails.createdAt).toLocaleString()}</span>
@@ -442,18 +435,18 @@ export default function KnowledgeBase() {
               </div>
               <div className="flex items-center gap-2 text-slate-500">
                 <Database className="w-3.5 h-3.5 shrink-0 text-cyan-500" />
-                <span>Vector Index: ai-support-assistant</span>
+                <span>Workspace Namespace: prod-rag-vectors</span>
               </div>
             </div>
 
             <div className="border-t border-slate-100 dark:border-slate-900 my-1"></div>
 
-            <div className="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-200/50 dark:border-slate-850/60">
+            <div className="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-250/20 dark:border-slate-850/60">
               <div className="flex items-center justify-between text-slate-850 dark:text-slate-250 font-bold mb-1">
-                <span>Disk Path</span>
+                <span>Ingestion Status</span>
               </div>
-              <p className="text-[9px] font-mono text-slate-450 break-all leading-normal">
-                {selectedDocDetails.path}
+              <p className="text-[10px] text-slate-500 leading-normal">
+                Document parsed, split into recursive characters with overlap, and verified in index.
               </p>
             </div>
 

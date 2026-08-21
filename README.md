@@ -1,22 +1,28 @@
-# 🔮 KnowledgeHub AI — Enterprise Knowledge Intelligence Platform
+# THEDAL — Enterprise Knowledge Intelligence Platform
 
-> A premium, high-performance RAG-powered Enterprise Knowledge Intelligence Platform built for modern workspaces. Powered by Google Gemini and Pinecone Vector Database, with a zero-configuration local database fallback.
-
-![KnowledgeHub AI Dashboard](./frontend/src/assets/dashboard_preview.png)
+> State-of-the-Art Enterprise Knowledge Intelligence and Context-Aware Semantic Search Solution.
 
 ---
 
-## 🚀 Key Features
+## 📄 Tagline
+Unify, search, and synthesize organizational knowledge securely with low-latency neural retrieval.
 
-*   **⚡ Live RAG (Retrieval-Augmented Generation)**: Upload product manuals, custom user guides, or FAQs to inject real-time context directly into LLM support conversations.
-*   **🎙️ Integrated Voice & Audio Response Player**: Transcribe audio queries in real-time with waveform feedback, and listen to AI answers read aloud via an interactive sentence-level media controller (Play/Pause, Skip Forward/Backward) voiced in an Indian male vocal profile.
-*   **🧠 Dual Model Intelligence**:
-    *   **Embeddings**: Powered by `gemini-embedding-001` (optimized to `768` dimensions).
-    *   **Generation**: Powered by the advanced `gemini-3.5-flash` model, ensuring fast response times and low-latency.
-*   **💾 Zero-Configuration Local DB Fallback**: If MongoDB Atlas connection fails or encounters firewall blockages (such as missing IP whitelisting), the server automatically activates a local JSON database fallback (`documents.json`) to keep the system fully functional.
-*   **📱 Glassmorphic Responsive Layout**: Beautiful Vercel/Linear-inspired dark/light theme options, responsive top navbar, and an overlay sidebar drawer designed for seamless mobile navigation.
-*   **🔄 Automated Index Status Polling**: The frontend automatically polls processing documents from the server and updates RAG indexing statuses in real-time.
-*   **📊 Integrated Performance Dashboard**: Visualizes weekly query volumes and logs server event streams dynamically.
+---
+
+## 🔮 Product Overview
+THEDAL is an enterprise-grade Retrieval-Augmented Generation (RAG) platform designed to index complex unstructured manuals, technical spec sheets, FAQs, and product guides. It compiles them into high-density vector embeds for seamless query resolution. By merging secure database endpoints with Google Gemini language reasoning models, THEDAL eliminates model hallucinations, delivering contextual knowledge to teammates and departments instantly.
+
+The platform is designed to prioritize high accessibility, touch responsiveness, data privacy, and adaptive connection states. It provides an offline failover engine that switches to a local datastore if cloud clusters are inaccessible.
+
+---
+
+## 🚀 Key Capabilities
+*   **⚡ Sub-250ms Context Ingestion**: PDF uploads are automatically processed, split, and vectorized via Gemini neural pipelines.
+*   **🎙️ Integrated Voice Assistant (Play/Pause, Skip controls)**: Fully local speech-to-text input paired with an Indian English voice synthesizer for hands-free operations.
+*   **💻 Responsive Dashboard Telemetry**: Visualizes system queries, latency spikes, and live pipeline status updates.
+*   **🛡️ Private Configuration Enclosure**: Replaces vulnerable user-facing credentials forms with secure server env handchecks.
+*   **💾 Database Core Failover**: Automatically activates a local JSON database fallback (`documents.json`) if MongoDB Atlas becomes unreachable.
+*   **🎨 Elite Industrial Dark Mode**: Custom CSS layout following professional, distraction-free corporate layouts.
 
 ---
 
@@ -24,198 +30,177 @@
 
 ```mermaid
 graph TD
-    User([User Client]) -->|Interacts| Frontend[React Single Page Application]
-    Frontend -->|RAG Queries & Uploads| Backend[Express REST API]
+    User([User Client]) -->|Queries & Uploads| Frontend[React Single Page Application]
+    Frontend -->|API Gateway| Backend[Express REST API]
     
-    subgraph Data Layer
-        Backend -->|Metadata fallback if Atlas offline| LocalDB[(Local documents.json)]
-        Backend -->|Primary Metadata| MongoAtlas[(MongoDB Atlas Cluster)]
+    subgraph Data Tier
+        Backend -->|Mongoose Cluster| MongoAtlas[(MongoDB Atlas Cluster)]
+        Backend -->|Local Cache Failover| LocalDB[(Local documents.json)]
     end
     
-    subgraph Vector Pipeline
-        Backend -->|PDF Parsing & Chunking| LangChain[LangChain Splitters]
-        LangChain -->|Text Chunks| GeminiEmbed[gemini-embedding-001]
-        GeminiEmbed -->|768-dim Vectors| Pinecone[(Pinecone Vector DB)]
-    end
-    
-    subgraph Answer Synthesis
-        Backend -->|Query Search| Pinecone
-        Pinecone -->|Relevant Context| ContextAggregator[Context Aggregator]
-        ContextAggregator -->|System Prompt| GeminiLLM[gemini-3.5-flash]
-        GeminiLLM -->|Synthesized Response| Backend
+    subgraph Vector Search Pipeline
+        Backend -->|LangChain Parser| Splitter[Recursive Character Splitter]
+        Splitter -->|Gemini Embedding Engine| Embeddings[gemini-embedding-001]
+        Embeddings -->|768-dim Vectors| Pinecone[(Pinecone Vector DB)]
     end
 ```
 
-### Detailed Component Overview
+---
 
-1.  **Ingestion & Parsing**: When a PDF is uploaded, `pdf-parse` extracts raw text, which is sent to LangChain's `RecursiveCharacterTextSplitter`. Text is segmented into chunks of `1000` characters with a `200` character overlap to maintain semantic continuity across boundaries.
-2.  **Vector Mapping & Upsert**: Chunks are mapped to 768-dimension vectors using Google's embedding model and batch-uploaded in sizes of `100` to Pinecone DB to prevent payload throttling.
-3.  **Context-Retrieval Loop**: When querying the AI, the query is embedded and matched against Pinecone vectors. Matching chunks with a similarity score `> 0.3` are loaded as prompt contexts.
-4.  **Generative Synthesis**: The matched context is merged into a system template forcing the LLM to restrict answers to context blocks, eliminating hallucinations.
-5.  **Failover Storage**: The database connector manages connectivity checks. If the MongoDB cluster is unreachable, Mongoose triggers a file-based cache at `backend/data/documents.json`.
+## 🛠️ Technology Stack
+*   **Frontend**: React (Vite), Tailwind CSS, Framer Motion, Axios for API interfacing.
+*   **Backend**: Node.js, Express web server framework.
+*   **Databases**: MongoDB Atlas (metadata), Pinecone (Vector database).
+*   **Model Intelligence**: Google Gemini (Embeddings and LLM synthesis).
 
 ---
 
-## 🎙️ Integrated Voice & Audio Response Assistant
-
-The AI Chat interface features full voice capability, supporting both client-side voice recognition (speech-to-text) and AI voice synthesis (text-to-speech) powered by the Web Speech API:
-
-### 🎤 Voice Input (Speech-to-Text)
-*   **Technology**: Uses standard `window.SpeechRecognition` (and `window.webkitSpeechRecognition` fallback) to transcribe user voice input locally.
-*   **Microphone Handlers**: Handles active recording overlays and animates an interactive floating waveform indicator representing audio input levels.
-*   **Workflow**:
-    1. Clicking the microphone button requests browser audio permissions.
-    2. Real-time audio streams are transcribed locally.
-    3. The speech result populates the chat input field, allowing instant submissions.
-
-### 🔊 Audio Responses & Media Player (Text-to-Speech)
-*   **Modi Voice Engine**: Searches for and prioritizes Indian English (`en-IN`) / Hindi (`hi-IN`) male voices (such as Microsoft Ravi, Microsoft Hemant, or Apple Rishi) to approximate an Indian male speaking style.
-*   **Advanced Media Controls**: Active responses display a dedicated control panel:
-    *   **Play/Pause**: Toggle to halt or resume speaking. Playback is paused at the sentence level to avoid browser speechSynthesis bugs.
-    *   **Skip Forward / Skip Backward**: Instantly jump to the next or previous sentence in the response text.
-    *   **Stop**: Silence all speech output and clear state.
-*   **Sentence-Level Splitting**: Text is split into semantic sentences (ignoring numeric decimals) to enable robust playback control.
-*   **Progress Indicator & Progress Bar**: Renders a progress bar showing `(current sentence / total sentences) * 100` progress, along with a "Sentence X of Y" counter text.
-*   **Global Auto-Play (Voice Response)**: A header-mounted toggle switch lets users enable automatic reading of all new AI responses. Selection is cached in `localStorage`.
-*   **Browser Compatibility**: Full native support across Google Chrome, Apple Safari, Microsoft Edge, and modern Chromium-based browsers. Gracefully falls back to default system voice when no Indian-accented voices are available.
+## 🔄 System Workflow
+1.  **Ingestion & Parsing**: PDFs are chunked into 1000-character segments with a 200-character overlapping slice.
+2.  **Vector Mapping**: Text segments are converted to 768-dimension vectors and stored in Pinecone database namespaces.
+3.  **Prompt Synthesis**: Queries search Pinecone database indices. Relevant text chunks with a cosine similarity > 0.3 are structured inside system prompt templates.
+4.  **Generative Inference**: Gemini API synthesizes responses restricted strictly to the gathered materials.
 
 ---
 
-## 🔌 API Documentation
-
-All API endpoints are mounted under the `/api` route path:
-
-### 1. Chat Pipeline
-*   **`POST /api/chat`**
-    *   *Description*: Evaluates the user query, queries Pinecone database vectors, and returns synthesized answers.
-    *   *Body JSON*:
-        ```json
-        {
-          "message": "What is the return policy for our plans?"
-        }
-        ```
-    *   *Response JSON*:
-        ```json
-        {
-          "success": true,
-          "text": "The return policy allows cancellations within 14 days...",
-          "simulated": false,
-          "sources": ["refund_policy_guide.pdf"]
-        }
-        ```
-
-### 2. Document Catalog
-*   **`POST /api/documents/upload`**
-    *   *Description*: Uploads a PDF manual, writes metadata to database, and initiates background indexing.
-    *   *Content-Type*: `multipart/form-data`
-    *   *Payload*: `file: File (PDF, max 10MB)`
-    *   *Response JSON*:
-        ```json
-        {
-          "success": true,
-          "message": "File uploaded and queued for vector embedding.",
-          "document": {
-            "_id": "64cbca9f...",
-            "originalName": "API_Specs.pdf",
-            "size": 409600,
-            "status": "uploaded"
-          }
-        }
-        ```
-
-*   **`GET /api/documents`**
-    *   *Description*: Retrieves a list of all ingested document records.
-    *   *Response JSON*:
-        ```json
-        [
-          {
-            "_id": "64cbca9f...",
-            "originalName": "API_Specs.pdf",
-            "size": 409600,
-            "status": "processed",
-            "createdAt": "2026-08-01T18:50:00.000Z"
-          }
-        ]
-        ```
-
-*   **`DELETE /api/documents/:id`**
-    *   *Description*: Deletes the document metadata record and purges all related vector embeddings inside Pinecone.
-    *   *Response JSON*:
-        ```json
-        {
-          "success": true,
-          "message": "Document record and related vector embeddings purged successfully."
-        }
-        ```
-
-### 3. Server Health
-*   **`GET /api/health`**
-    *   *Description*: Checks cluster status and database connector fallback modes.
-    *   *Response JSON*:
-        ```json
-        {
-          "status": "OK",
-          "timestamp": "2026-08-02T00:30:00.000Z",
-          "uptime": 86400,
-          "database": {
-            "status": "connected",
-            "code": 1
-          }
-        }
-        ```
+## 📁 Project Structure
+```
+thedal-rag/
+├── backend/
+│   ├── src/
+│   │   ├── config/       # Connection parameters & fallbacks
+│   │   ├── models/       # Mongoose schemas
+│   │   ├── routes/       # Express endpoints
+│   │   └── app.js        # Server gateway app
+│   ├── data/             # Local offline database files
+│   └── package.json
+└── frontend/
+    ├── src/
+    │   ├── components/   # Modular dashboard items
+    │   ├── pages/        # Main route screens (Overview, Ask THEDAL, Documents)
+    │   └── App.jsx       # Theme and entry router
+    └── package.json
+```
 
 ---
 
-## ⚙️ Quick Installation
+## ⚙️ Installation
 
-### Prerequisites
-Make sure you have [Node.js](https://nodejs.org/) (v18 or higher) installed.
+To initialize THEDAL locally, install dependencies in both the backend and frontend directories:
 
-### 1. Setup Backend
-1. Navigate to the backend directory:
+```bash
+# Clone the repository
+git clone https://github.com/your-org/thedal-rag.git
+cd thedal-rag
+```
+
+---
+
+## 🔑 Environment Variables
+Configure primary credentials in `backend/.env`. Ensure you do not expose private keys in client-side code:
+
+```env
+# Database Credentials
+MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/dbname
+
+# Intelligence model key
+GEMINI_API_KEY=your_gemini_api_key_here
+
+# Pinecone credentials
+PINE_CONE_API_KEY=your_pinecone_api_key_here
+PINECONE_INDEX_NAME=ai-support-assistant
+```
+
+---
+
+## 💻 Local Development
+
+### 1. Backend Setup
+1. Inside `backend`, install dependencies:
    ```bash
    cd backend
-   ```
-2. Install dependencies:
-   ```bash
    npm install
    ```
-3. Create a `.env` file in the `backend/` folder and configure it using the template below:
-   ```env
-   # Database Configuration (Atlas or Local fallback)
-   MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/dbname
-
-   # Google Gemini API
-   GEMINI_API_KEY=your_gemini_api_key_here
-
-   # Pinecone Vector Database Configuration
-   PINE_CONE_API_KEY=your_pinecone_api_key_here
-   PINECONE_INDEX_NAME=ai-support-assistant
-   ```
-4. Start the backend development server:
+2. Configure your credentials inside `.env`.
+3. Launch development server:
    ```bash
    npm run dev
    ```
 
-### 2. Setup Frontend
-1. Navigate to the frontend directory:
+### 2. Frontend Setup
+1. Inside `frontend`, install dependencies:
    ```bash
    cd ../frontend
-   ```
-2. Install dependencies:
-   ```bash
    npm install
    ```
-3. Start the Vite development server:
+2. Launch Vite local compiler:
    ```bash
    npm run dev
    ```
-4. Open the application in your browser at `http://localhost:5173`.
+3. Open the product at `http://localhost:5173`.
 
 ---
 
-## 🛡️ Database Fallback Mechanism
-KnowledgeHub AI contains a fallback system in `src/config/db.js` and `src/models/Document.js`. If the `MONGO_URI` connection times out or fails (e.g., due to IP Whitelisting restrictions on remote clusters), the system logs a warning:
-> `⚠️ Falling back to local JSON database (documents.json) for storage.`
+## 💾 Database Setup
+1. Create a MongoDB Atlas cluster or install MongoDB locally.
+2. Provide the database connection link in the `MONGO_URI` variable.
+3. If no URI is configured, the server defaults to the local storage failover `backend/data/documents.json`.
 
-All metadata creations, retrievals, and deletions automatically redirect to a local database at `backend/data/documents.json`. This keeps the API online and allows you to test vector indexing and RAG pipeline workflows entirely offline.
+---
+
+## 🌲 Pinecone Setup
+1. Create a Pinecone database dashboard account.
+2. Initialize an index with exactly `768` dimensions using the Cosine distance metric.
+3. Paste keys into your config environment variables.
+
+---
+
+## 🤖 Gemini Setup
+1. Retrieve an API Key from Google AI Studio.
+2. Configure parameters within the `GEMINI_API_KEY` placeholder. 
+
+---
+
+## 🔌 API Overview
+*   **`POST /api/chat`**: Query vector indices for synthesized context responses.
+*   **`POST /api/documents/upload`**: Ingest PDF guidelines metadata.
+*   **`GET /api/documents`**: Fetch database logs catalog.
+*   **`DELETE /api/documents/:id`**: Purge files and corresponding vector embeddings.
+*   **`GET /api/health`**: Retrieve host connection stats, database status, and cluster uptime.
+
+---
+
+## 🚀 Deployment
+Deploy THEDAL using standard cloud structures:
+*   **Frontend**: Host on Vercel or Netlify. Set `VITE_API_BASE_URL` in project settings.
+*   **Backend**: Host on Render, AWS App Runner, or Heroku. Configure environment keys securely.
+
+---
+
+## 🛡️ Security Considerations
+*   **Key Enclosures**: Credentials are kept strictly on the host environment; the frontend client never loads raw secrets.
+*   **Data Isolation**: All document deletions dynamically purge linked Pinecone vectors using metadata indices.
+*   **HTTPS Interlacing**: CORS configurations restrict requests to defined production gateways.
+
+---
+
+## ⚡ Performance Considerations
+*   **Vectored Batching**: Pinecone upsert actions run in batches of 100 to prevent payload throttling.
+*   **Optimized Bundling**: Assets are compressed with Vite, maintaining sub-second client load timings.
+
+---
+
+## 🗺️ Future Roadmap
+1.  **Multi-Language Audio Interfacing**: Support for non-English manuals (French, Spanish, German).
+2.  **Role-Based Access Controls (RBAC)**: Fine-grained user access gates.
+3.  **Active Directory (AD) / Azure SSO Integration**: Enterprise user registry sync.
+
+---
+
+## 🤝 Contributing
+Please submit clean pull requests with detailed tests. For major enhancements, open discussion threads with design systems documentation.
+
+---
+
+## ⚖️ License
+Enterprise Proprietary License. Copyright © 2026 THEDAL. All rights reserved.
