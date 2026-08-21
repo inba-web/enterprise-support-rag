@@ -18,9 +18,9 @@ function App() {
         localStorage.removeItem("user");
       }
     }
-    
+
     // Set visual theme from preferences
-    const savedTheme = localStorage.getItem("theme") || "light";
+    const savedTheme = localStorage.getItem("theme") || "dark";
     if (savedTheme === "dark") {
       document.documentElement.classList.add("dark");
     } else {

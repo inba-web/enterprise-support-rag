@@ -474,7 +474,7 @@ To reset your console passwords:
             >
               <FolderOpen className="w-3.5 h-3.5" />
             </button>
-            <span className="text-xs font-bold text-slate-850 dark:text-slate-100">KnowledgeHub AI Agent</span>
+            <span className="text-xs font-bold text-slate-850 dark:text-slate-100">thedal-rag Agent</span>
             <Badge variant="default" className="text-[9px] px-1.5 py-0 font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400">
               Gemini 3.5 Flash
             </Badge>

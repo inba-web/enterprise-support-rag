@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import Logo from "../components/ui/Logo";
 import Button from "../components/ui/Button";
 import Card, { CardContent } from "../components/ui/Card";
 import {
@@ -57,11 +58,11 @@ export default function LandingPage({ onGetStarted }) {
   const faqs = [
     {
       question: "How does the Retrieval-Augmented Generation (RAG) pipeline function?",
-      answer: "When a support agent or user submits a query, KnowledgeHub AI embeds the query and searches the Pinecone Vector Database for matching text chunks. These matching blocks are sent alongside the query to the Gemini 3.5 Flash model as secure context to synthesize a fact-grounded response."
+      answer: "When a support agent or user submits a query, thedal-rag embeds the query and searches the Pinecone Vector Database for matching text chunks. These matching blocks are sent alongside the query to the Gemini 3.5 Flash model as secure context to synthesize a fact-grounded response."
     },
     {
       question: "What happens if our MongoDB database is unreachable?",
-      answer: "KnowledgeHub AI features an automated database failover handler. If MongoDB Atlas is offline or blocked by IP whitelist restrictions, the backend dynamically switches all CRUD requests to a localized file-based JSON store. Your workspace continues working offline without data loss."
+      answer: "thedal-rag features an automated database failover handler. If MongoDB Atlas is offline or blocked by IP whitelist restrictions, the backend dynamically switches all CRUD requests to a localized file-based JSON store. Your workspace continues working offline without data loss."
     },
     {
       question: "Are custom API integration keys stored securely?",
@@ -80,12 +81,7 @@ export default function LandingPage({ onGetStarted }) {
       <header className="fixed top-0 w-full z-50 border-b border-slate-200/60 dark:border-slate-900/60 bg-white/70 dark:bg-slate-950/70 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-650 flex items-center justify-center font-bold text-white text-base shadow-sm">
-              K
-            </div>
-            <span className="font-extrabold text-sm tracking-tight bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 dark:from-white dark:via-slate-200 dark:to-indigo-200 bg-clip-text text-transparent">
-              KnowledgeHub AI
-            </span>
+            <Logo className="w-7 h-7" variant="full" />
           </div>
 
           {/* Desktop links */}
@@ -325,15 +321,10 @@ export default function LandingPage({ onGetStarted }) {
       <footer className="border-t border-slate-200 dark:border-slate-900 bg-white dark:bg-slate-950 py-10 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
-            <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white text-sm">
-              K
-            </div>
-            <span className="font-bold text-xs tracking-tight text-slate-800 dark:text-white">
-              KnowledgeHub AI
-            </span>
+            <Logo className="w-6 h-6" variant="full" />
           </div>
           <p className="text-[10px] text-slate-400 dark:text-slate-550">
-            &copy; {new Date().getFullYear()} KnowledgeHub AI Inc. Enterprise Knowledge Intelligence. All rights reserved.
+            &copy; {new Date().getFullYear()} thedal-rag Inc. Enterprise Knowledge Intelligence. All rights reserved.
           </p>
         </div>
       </footer>

@@ -28,8 +28,8 @@ function Message({
       {/* Avatar Wrapper */}
       <div
         className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border shadow-[0_1px_2px_0_rgba(0,0,0,0.03)] ${isUser
-            ? "bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-355 font-bold text-xs"
-            : "bg-slate-950 border-slate-950 text-white dark:bg-slate-50 dark:border-slate-100 dark:text-slate-900 font-bold"
+          ? "bg-slate-100 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-355 font-bold text-xs"
+          : "bg-slate-950 border-slate-950 text-white dark:bg-slate-50 dark:border-slate-100 dark:text-slate-900 font-bold"
           }`}
       >
         {isUser ? (
@@ -45,7 +45,7 @@ function Message({
         {/* Sender Name & Meta details */}
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold text-slate-850 dark:text-slate-200 tracking-tight">
-            {isUser ? "You" : "KnowledgeHub Assistant"}
+            {isUser ? "You" : "thedal-rag Assistant"}
           </span>
           <span className="text-[9px] text-slate-455 dark:text-slate-500 font-medium">
             {message.timestamp || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}

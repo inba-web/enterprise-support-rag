@@ -3,6 +3,7 @@ import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
 import Card, { CardContent } from "../components/ui/Card";
 import { ArrowLeft, KeyRound, Mail, ShieldAlert, Cpu } from "lucide-react";
+import Logo from "../components/ui/Logo";
 
 export default function Auth({ onLoginSuccess, onBackToLanding }) {
   const [email, setEmail] = useState("");
@@ -57,12 +58,10 @@ export default function Auth({ onLoginSuccess, onBackToLanding }) {
 
           {/* Brand Header */}
           <div className="flex flex-col items-center text-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-650 flex items-center justify-center font-bold text-white text-base shadow-sm">
-              K
-            </div>
+            <Logo className="w-8 h-8" variant="icon" />
             <div>
               <h1 className="text-lg font-extrabold text-slate-900 dark:text-slate-50 tracking-tight">
-                KnowledgeHub AI Console
+                thedal-rag Console
               </h1>
               <p className="text-[10px] uppercase font-bold text-slate-400 mt-1 tracking-wider">
                 Enterprise Knowledge Intelligence
@@ -197,15 +196,13 @@ export default function Auth({ onLoginSuccess, onBackToLanding }) {
         <div className="max-w-md w-full flex flex-col gap-6 text-center z-10 select-none">
 
           <div className="flex justify-center">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-650 flex items-center justify-center font-bold text-white text-3xl shadow-lg border border-white/10">
-              K
-            </div>
+            <Logo className="w-14 h-14" variant="icon" />
           </div>
 
           <div>
             <h2 className="text-xl font-bold tracking-tight text-white mb-2">Neural Ingestion Pipeline</h2>
             <p className="text-xs text-slate-350 leading-relaxed max-w-sm mx-auto">
-              KnowledgeHub AI builds real-time contextual indexes for generative models, transforming manuals into custom fact-grounded knowledge streams.
+              thedal-rag builds real-time contextual indexes for generative models, transforming manuals into custom fact-grounded knowledge streams.
             </p>
           </div>
 

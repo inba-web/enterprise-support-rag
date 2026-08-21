@@ -61,7 +61,7 @@ export default function Profile({ user = { name: "john.doe", email: "john.doe@co
 
               <div className="flex items-center justify-between py-1.5 border-b border-slate-50 dark:border-slate-900/40">
                 <span className="font-medium text-slate-400 dark:text-slate-500">Active Workspace</span>
-                <span className="font-bold text-slate-800 dark:text-slate-200">KnowledgeHub Workspace</span>
+                <span className="font-bold text-slate-800 dark:text-slate-200">thedal-rag Workspace</span>
               </div>
 
               <div className="flex items-center justify-between py-1.5 border-b border-slate-50 dark:border-slate-900/40">

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ChatBox from "../components/ChatBox";
+import Logo from "../components/ui/Logo";
 import Overview from "./Overview";
 import KnowledgeBase from "./KnowledgeBase";
 import Settings from "./Settings";
@@ -35,7 +36,7 @@ import {
 export default function Home({ user, onSignOut }) {
   const [activePage, setActivePage] = useState("overview");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
   const [activeWorkspace, setActiveWorkspace] = useState("prod-rag");
   const [searchQuery, setSearchQuery] = useState("");
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -122,13 +123,11 @@ export default function Home({ user, onSignOut }) {
         {/* Brand Header */}
         <div className="h-16 flex items-center justify-between px-4 border-b border-slate-100 dark:border-slate-900">
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-650 flex items-center justify-center font-bold text-white text-sm shrink-0">
-              K
-            </div>
+            <Logo className="w-7 h-7" variant="icon" />
             {!isSidebarCollapsed && (
               <div className="flex flex-col">
-                <span className="font-extrabold text-xs tracking-tight bg-gradient-to-r from-slate-900 via-slate-850 to-indigo-950 dark:from-white dark:via-slate-250 dark:to-indigo-200 bg-clip-text text-transparent truncate">
-                  KnowledgeHub AI
+                <span className="font-black text-xs tracking-wider uppercase bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 bg-clip-text text-transparent truncate">
+                  thedal-rag
                 </span>
                 <span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Console v1.0</span>
               </div>
@@ -152,8 +151,8 @@ export default function Home({ user, onSignOut }) {
                     key={item.id}
                     onClick={() => navigateTo(item.id)}
                     className={`w-full text-left px-3 py-2 rounded-lg text-xs font-semibold transition-all flex items-center gap-3 border border-transparent cursor-pointer ${isActive
-                        ? "bg-slate-100/90 text-slate-950 dark:bg-slate-900/60 dark:text-white border-slate-200/50 dark:border-slate-800/40 shadow-sm"
-                        : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-50/50 dark:hover:bg-slate-900/10"
+                      ? "bg-slate-100/90 text-slate-950 dark:bg-slate-900/60 dark:text-white border-slate-200/50 dark:border-slate-800/40 shadow-sm"
+                      : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-50/50 dark:hover:bg-slate-900/10"
                       }`}
                     title={isSidebarCollapsed ? item.label : ""}
                   >
