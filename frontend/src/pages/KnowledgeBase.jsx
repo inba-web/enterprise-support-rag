@@ -22,7 +22,8 @@ import {
   X
 } from "lucide-react";
 
-const DOCS_URL = "http://localhost:5000/api/documents";
+import { API_URLS } from "../config";
+const DOCS_URL = API_URLS.documents;
 
 export default function KnowledgeBase() {
   const [documents, setDocuments] = useState([]);
@@ -202,8 +203,8 @@ export default function KnowledgeBase() {
                   onDragLeave={handleDragLeave}
                   onDrop={handleDrop}
                   className={`border border-dashed rounded-xl p-6 flex flex-col items-center justify-center text-center transition-all cursor-pointer relative ${isDragOver
-                      ? "border-blue-500 bg-blue-500/5 dark:bg-blue-500/5"
-                      : "border-slate-200 dark:border-slate-800 hover:border-slate-350 bg-slate-50/20 dark:bg-slate-900/10 hover:bg-slate-50/40 dark:hover:bg-slate-900/20"
+                    ? "border-blue-500 bg-blue-500/5 dark:bg-blue-500/5"
+                    : "border-slate-200 dark:border-slate-800 hover:border-slate-350 bg-slate-50/20 dark:bg-slate-900/10 hover:bg-slate-50/40 dark:hover:bg-slate-900/20"
                     }`}
                 >
                   <input

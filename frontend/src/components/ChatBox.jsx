@@ -20,7 +20,8 @@ import {
   VolumeX
 } from "lucide-react";
 
-const API_URL = "http://localhost:5000/api/chat";
+import { API_URLS } from "../config";
+const API_URL = API_URLS.chat;
 
 const INITIAL_CONVERSATIONS = [
   { id: "conv-1", title: "General Inquiries & Pricing", summary: "View billing tiers and SLA uptime options." },
@@ -120,10 +121,10 @@ export default function ChatBox() {
     // Search for Indian English (en-IN) / Hindi (hi-IN) male voices to match the "Modi" style
     if (window.speechSynthesis.getVoices) {
       const voices = window.speechSynthesis.getVoices();
-      
+
       // 1. Try Indian English Male
-      let selectedVoice = voices.find(v => 
-        v.lang === "en-IN" && 
+      let selectedVoice = voices.find(v =>
+        v.lang === "en-IN" &&
         (v.name.toLowerCase().includes("ravi") || v.name.toLowerCase().includes("rishi") || v.name.toLowerCase().includes("male"))
       );
 
@@ -260,7 +261,7 @@ export default function ChatBox() {
   const triggerReply = (text) => {
     setTimeout(() => {
       setIsTyping(false);
-      
+
       const newMsg = {
         sender: "ai",
         text,
@@ -446,8 +447,8 @@ To reset your console passwords:
               key={conv.id}
               onClick={() => selectConversation(conv.id)}
               className={`text-left p-3 rounded-xl transition-all border ${activeConvId === conv.id
-                  ? "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-[0_1px_2.5px_0_rgba(0,0,0,0.03)]"
-                  : "border-transparent hover:bg-slate-50 dark:hover:bg-slate-900/40"
+                ? "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-[0_1px_2.5px_0_rgba(0,0,0,0.03)]"
+                : "border-transparent hover:bg-slate-50 dark:hover:bg-slate-900/40"
                 }`}
             >
               <span className="text-xs font-bold text-slate-850 dark:text-slate-200 block truncate">
@@ -486,15 +487,13 @@ To reset your console passwords:
               </span>
               <button
                 onClick={() => setAutoPlayVoice(!autoPlayVoice)}
-                className={`w-7 h-4 rounded-full p-0.5 transition-colors duration-200 focus:outline-none cursor-pointer ${
-                  autoPlayVoice ? "bg-blue-600" : "bg-slate-200 dark:bg-slate-800"
-                }`}
+                className={`w-7 h-4 rounded-full p-0.5 transition-colors duration-200 focus:outline-none cursor-pointer ${autoPlayVoice ? "bg-blue-600" : "bg-slate-200 dark:bg-slate-800"
+                  }`}
                 title={autoPlayVoice ? "Auto-play: Enabled" : "Auto-play: Disabled"}
               >
                 <div
-                  className={`w-3 h-3 rounded-full bg-white shadow-sm transition-transform duration-200 ${
-                    autoPlayVoice ? "translate-x-3" : "translate-x-0"
-                  }`}
+                  className={`w-3 h-3 rounded-full bg-white shadow-sm transition-transform duration-200 ${autoPlayVoice ? "translate-x-3" : "translate-x-0"
+                    }`}
                 />
               </button>
             </div>
@@ -661,8 +660,8 @@ To reset your console passwords:
             <button
               onClick={toggleVoiceRecording}
               className={`p-1.5 rounded-lg transition-all cursor-pointer ${isVoiceActive
-                  ? "text-rose-500 bg-rose-500/10 animate-pulse"
-                  : "text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-850"
+                ? "text-rose-500 bg-rose-500/10 animate-pulse"
+                : "text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-850"
                 }`}
               title="Voice Input"
             >
@@ -674,8 +673,8 @@ To reset your console passwords:
               onClick={() => handleSend()}
               disabled={isTyping || !input.trim()}
               className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all cursor-pointer ${input.trim() && !isTyping
-                  ? "bg-slate-950 text-white hover:bg-slate-900 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-200"
-                  : "text-slate-300 dark:text-slate-800 bg-transparent"
+                ? "bg-slate-950 text-white hover:bg-slate-900 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-200"
+                : "text-slate-300 dark:text-slate-800 bg-transparent"
                 }`}
             >
               <Send className="w-3.5 h-3.5" />
@@ -721,8 +720,8 @@ To reset your console passwords:
                     key={conv.id}
                     onClick={() => { selectConversation(conv.id); setShowMobileSidebar(false); }}
                     className={`text-left p-3 rounded-xl transition-all border ${activeConvId === conv.id
-                        ? "bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-[0_1px_2.5px_0_rgba(0,0,0,0.02)]"
-                        : "border-transparent hover:bg-slate-50 dark:hover:bg-slate-900/40"
+                      ? "bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-[0_1px_2.5px_0_rgba(0,0,0,0.02)]"
+                      : "border-transparent hover:bg-slate-50 dark:hover:bg-slate-900/40"
                       }`}
                   >
                     <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block truncate">

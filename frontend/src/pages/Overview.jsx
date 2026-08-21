@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { API_URLS } from "../config";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import Card, { CardContent, CardHeader } from "../components/ui/Card";
 import Badge from "../components/ui/Badge";
@@ -47,7 +48,7 @@ export default function Overview() {
   useEffect(() => {
     const fetchStatsData = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/documents");
+        const response = await axios.get(API_URLS.documents);
         const docs = response.data;
 
         // Calculate mock embedding count: roughly 4 chunks per doc
