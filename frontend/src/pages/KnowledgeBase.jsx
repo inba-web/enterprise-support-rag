@@ -422,6 +422,29 @@ export default function KnowledgeBase() {
 
             <div className="border-t border-slate-100 dark:border-slate-900 my-1"></div>
 
+            <h4 className="text-[10px] font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">Document Statistics</h4>
+
+            <div className="grid grid-cols-3 gap-2 py-1 text-center">
+              <div className="p-2 border border-slate-100 dark:border-slate-900 rounded-lg bg-slate-50/10 dark:bg-slate-900/5">
+                <span className="text-[8px] text-slate-400 font-bold block">Pages</span>
+                <span className="text-xs font-black text-slate-800 dark:text-slate-200">{selectedDocDetails.pageCount || "1"}</span>
+              </div>
+              <div className="p-2 border border-slate-100 dark:border-slate-900 rounded-lg bg-slate-50/10 dark:bg-slate-900/5">
+                <span className="text-[8px] text-slate-400 font-bold block">Words</span>
+                <span className="text-xs font-black text-slate-800 dark:text-slate-200">
+                  {selectedDocDetails.wordCount ? selectedDocDetails.wordCount.toLocaleString() : "—"}
+                </span>
+              </div>
+              <div className="p-2 border border-slate-100 dark:border-slate-900 rounded-lg bg-slate-50/10 dark:bg-slate-900/5">
+                <span className="text-[8px] text-slate-400 font-bold block">Chars</span>
+                <span className="text-xs font-black text-slate-800 dark:text-slate-200">
+                  {selectedDocDetails.characterCount ? selectedDocDetails.characterCount.toLocaleString() : "—"}
+                </span>
+              </div>
+            </div>
+
+            <div className="border-t border-slate-100 dark:border-slate-900 my-1"></div>
+
             <h4 className="text-[10px] font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">Vector Index Parameters</h4>
 
             <div className="flex flex-col gap-2.5">

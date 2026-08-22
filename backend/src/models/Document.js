@@ -28,6 +28,18 @@ const DocumentSchema = new mongoose.Schema(
       type: Number,
       required: true // file size in bytes
     },
+    pageCount: {
+      type: Number,
+      default: 0
+    },
+    wordCount: {
+      type: Number,
+      default: 0
+    },
+    characterCount: {
+      type: Number,
+      default: 0
+    },
     status: {
       type: String,
       required: true,

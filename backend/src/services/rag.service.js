@@ -24,7 +24,7 @@ export const processDocumentBackground = async (docId) => {
   }
 
   console.log(`🤖 Starting text extraction & indexing for document: "${doc.originalName}"`);
-  
+
   try {
     // 1. Update status to 'processing'
     doc.status = "processing";
@@ -46,13 +46,23 @@ export const processDocumentBackground = async (docId) => {
       throw new Error("The PDF document is empty or could not be parsed.");
     }
 
+    // Compute document profile statistics
+    const characterCount = rawText.length;
+    const wordCount = rawText.trim().split(/\s+/).filter(w => w.length > 0).length;
+    const pageCount = Math.max(1, Math.ceil(characterCount / 2200));
+
+    doc.characterCount = characterCount;
+    doc.wordCount = wordCount;
+    doc.pageCount = pageCount;
+    await doc.save();
+
     // 4. Split text into chunks using LangChain
     console.log(`✂️ Splitting document text into chunks...`);
     const splitter = new RecursiveCharacterTextSplitter({
       chunkSize: 1000,
       chunkOverlap: 200
     });
-    
+
     // createDocuments returns array of Document objects with pageContent
     const chunks = await splitter.createDocuments([rawText]);
     console.log(`📝 Generated ${chunks.length} chunks for indexing.`);
@@ -64,7 +74,7 @@ export const processDocumentBackground = async (docId) => {
     // 5. Generate embeddings and prepare vectors for Pinecone
     const vectors = [];
     console.log(`🧠 Generating Gemini embeddings for chunks...`);
-    
+
     for (let i = 0; i < chunks.length; i++) {
       const chunkText = chunks[i].pageContent;
       // Fetch 768-dim embedding values
@@ -79,7 +89,7 @@ export const processDocumentBackground = async (docId) => {
           documentId: doc._id.toString()
         }
       });
-      
+
       // Prevent API throttling with a tiny delay
       await new Promise(resolve => setTimeout(resolve, 100));
     }
