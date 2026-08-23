@@ -12,6 +12,28 @@ export const uploadDocument = async (req, res, next) => {
       throw new Error("Please select a file to upload.");
     }
 
+    // Verify workspace limits before proceeding
+    const existingDocs = await Document.find({});
+    const totalSize = existingDocs.reduce((acc, d) => acc + d.size, 0);
+    const maxSize = 50 * 1024 * 1024; // 50MB
+    const maxCount = 10;
+
+    if (existingDocs.length >= maxCount) {
+      if (req.file.path && fs.existsSync(req.file.path)) {
+        await fs.promises.unlink(req.file.path);
+      }
+      res.status(400);
+      throw new Error(`Workspace document upload limit (${maxCount} documents) reached.`);
+    }
+
+    if (totalSize + req.file.size > maxSize) {
+      if (req.file.path && fs.existsSync(req.file.path)) {
+        await fs.promises.unlink(req.file.path);
+      }
+      res.status(400);
+      throw new Error("Workspace storage capacity limit (50MB) exceeded.");
+    }
+
     const doc = await Document.create({
       originalName: req.file.originalname,
       fileName: req.file.filename,

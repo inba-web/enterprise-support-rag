@@ -1,5 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
+import Document from "../models/Document.js";
 
 const router = express.Router();
 
@@ -24,6 +25,29 @@ router.get("/health", (req, res) => {
       code: dbStatus
     }
   });
+});
+
+// @desc    Get dynamic workspace ingestion quotas & storage metrics
+// @route   GET /api/workspace/limits
+// @access  Public
+router.get("/workspace/limits", async (req, res, next) => {
+  try {
+    const documents = await Document.find({});
+    const totalSize = documents.reduce((acc, doc) => acc + doc.size, 0);
+    const limitBytes = 50 * 1024 * 1024; // 50MB Workspace storage limit
+    const limitDocs = 10;
+
+    res.status(200).json({
+      success: true,
+      totalSize,
+      limitBytes,
+      documentCount: documents.length,
+      limitDocs,
+      percentUsed: parseFloat(((totalSize / limitBytes) * 100).toFixed(2))
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
 export default router;

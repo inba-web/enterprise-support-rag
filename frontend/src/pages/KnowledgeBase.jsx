@@ -35,6 +35,13 @@ export default function KnowledgeBase() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedDocDetails, setSelectedDocDetails] = useState(null);
+  const [limits, setLimits] = useState({
+    totalSize: 0,
+    limitBytes: 50 * 1024 * 1024,
+    documentCount: 0,
+    limitDocs: 10,
+    percentUsed: 0
+  });
 
   const fetchDocuments = async () => {
     try {
@@ -45,8 +52,20 @@ export default function KnowledgeBase() {
     }
   };
 
+  const fetchLimits = async () => {
+    try {
+      const response = await axios.get(`${API_URLS.base}/api/workspace/limits`);
+      if (response.data.success) {
+        setLimits(response.data);
+      }
+    } catch (err) {
+      console.warn("Failed to check workspace limits:", err);
+    }
+  };
+
   useEffect(() => {
     fetchDocuments();
+    fetchLimits();
   }, []);
 
   // Poll for document status updates if any document is in "uploaded" or "processing" status
@@ -129,6 +148,7 @@ export default function KnowledgeBase() {
         setSuccessMsg(`"${selectedFile.name}" uploaded successfully. Chunks are being indexed in Pinecone in the background.`);
         setSelectedFile(null);
         fetchDocuments();
+        fetchLimits();
       }
     } catch (err) {
       setErrorMsg(err.response?.data?.message || "File upload failed.");
@@ -150,6 +170,7 @@ export default function KnowledgeBase() {
         setSelectedDocDetails(null);
       }
       fetchDocuments();
+      fetchLimits();
     } catch (err) {
       setErrorMsg("Purge action failed.");
     }
@@ -261,6 +282,25 @@ export default function KnowledgeBase() {
                   </Button>
                 </div>
               </form>
+
+              {/* Workspace Quota Stats */}
+              <div className="border-t border-slate-100 dark:border-slate-900 pt-4 flex flex-col gap-2">
+                <div className="flex justify-between items-center text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                  <span>Workspace Allocation</span>
+                  <span>{limits.percentUsed}%</span>
+                </div>
+                <div className="w-full bg-slate-100 dark:bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-200/50 dark:border-slate-800">
+                  <div
+                    className={`h-full transition-all duration-300 ${limits.percentUsed > 80 ? "bg-rose-500" : limits.percentUsed > 50 ? "bg-amber-500" : "bg-blue-500"
+                      }`}
+                    style={{ width: `${Math.min(100, limits.percentUsed)}%` }}
+                  ></div>
+                </div>
+                <div className="flex justify-between text-[9px] text-slate-450 mt-0.5">
+                  <span>{formatBytes(limits.totalSize)} of {formatBytes(limits.limitBytes)} used</span>
+                  <span>{limits.documentCount} / {limits.limitDocs} PDFs</span>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
