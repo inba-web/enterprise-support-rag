@@ -17,7 +17,8 @@ import {
   X,
   History,
   Volume2,
-  VolumeX
+  VolumeX,
+  Download
 } from "lucide-react";
 
 import { API_URLS } from "../config";
@@ -47,6 +48,8 @@ export default function ChatBox() {
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const [showRating, setShowRating] = useState(false);
   const [rating, setRating] = useState(0);
+  const [selectedStars, setSelectedStars] = useState(0);
+  const [feedbackComment, setFeedbackComment] = useState("");
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
   const [isVoiceActive, setIsVoiceActive] = useState(false);
@@ -408,8 +411,8 @@ To reset your console passwords:
     }
   };
 
-  const handleRatingSubmit = (score) => {
-    setRating(score);
+  const handleRatingSubmit = () => {
+    setRating(selectedStars);
     setFeedbackSubmitted(true);
     setTimeout(() => {
       setShowRating(false);
@@ -417,11 +420,32 @@ To reset your console passwords:
         ...prev,
         {
           sender: "ai",
-          text: `Thank you for rating this conversation **${score}/5 stars**! Your feedback helps us improve.`,
+          text: `Thank you for rating this conversation **${selectedStars}/5 stars**!${feedbackComment.trim() ? ` Your feedback comment: *"${feedbackComment.trim()}"* has been logged.` : " Your feedback helps us improve."}`,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }
       ]);
+      setSelectedStars(0);
+      setFeedbackComment("");
     }, 1000);
+  };
+
+  const handleExportChat = () => {
+    if (messages.length === 0) return;
+
+    // Format chat into readable transcript text
+    const transcript = messages
+      .map(msg => `[${msg.timestamp}] ${msg.sender === "user" ? "User" : "Agent"}: ${msg.text}`)
+      .join("\n\n");
+
+    const blob = new Blob([transcript], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `chat-transcript-${activeConvId || "default"}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -480,6 +504,15 @@ To reset your console passwords:
             </Badge>
           </div>
           <div className="flex items-center gap-4">
+            {/* Export Chat Logs Button */}
+            <button
+              onClick={handleExportChat}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white text-[10px] font-bold cursor-pointer transition-colors h-7"
+              title="Export Transcript"
+            >
+              <Download className="w-3.5 h-3.5" /> Export Logs
+            </button>
+
             {/* Voice Mode Toggle Switch */}
             <div className="flex items-center gap-2 border border-slate-200/60 dark:border-slate-800 rounded-lg px-2 py-1 bg-slate-50/50 dark:bg-slate-900/10 transition-colors">
               <span className="text-[9px] font-bold text-slate-455 dark:text-slate-400 uppercase tracking-wider select-none flex items-center gap-1">
@@ -558,20 +591,34 @@ To reset your console passwords:
               <X className="w-3.5 h-3.5" />
             </button>
             {!feedbackSubmitted ? (
-              <>
-                <p className="text-[11px] font-bold text-slate-700 dark:text-slate-350 mb-2">Rate this conversation:</p>
+              <div className="w-full max-w-sm flex flex-col items-center gap-3">
+                <p className="text-[11px] font-bold text-slate-700 dark:text-slate-350">Rate this conversation:</p>
                 <div className="flex gap-2">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
                       key={star}
-                      onClick={() => handleRatingSubmit(star)}
+                      onClick={() => setSelectedStars(star)}
                       className="text-lg transition-transform hover:scale-110 cursor-pointer"
                     >
-                      <Star className="w-5 h-5 text-amber-400 fill-amber-400" />
+                      <Star className={`w-5 h-5 ${star <= selectedStars ? "text-amber-400 fill-amber-400" : "text-slate-300 dark:text-slate-700"}`} />
                     </button>
                   ))}
                 </div>
-              </>
+                {selectedStars > 0 && (
+                  <div className="w-full flex flex-col gap-2 mt-1">
+                    <textarea
+                      placeholder="Add an optional comment..."
+                      value={feedbackComment}
+                      onChange={(e) => setFeedbackComment(e.target.value)}
+                      rows={2}
+                      className="w-full text-[10px] p-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg outline-none resize-none placeholder-slate-400 text-slate-800 dark:text-slate-100"
+                    />
+                    <Button variant="default" size="sm" onClick={handleRatingSubmit} className="text-[9px] font-bold h-7 align-right self-end px-3">
+                      Submit Feedback
+                    </Button>
+                  </div>
+                )}
+              </div>
             ) : (
               <p className="text-[11px] font-bold text-emerald-600">🎉 Feedback logged. Thank you!</p>
             )}
