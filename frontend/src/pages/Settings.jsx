@@ -23,6 +23,25 @@ export default function Settings() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const [aiName, setAiName] = useState(
+    localStorage.getItem("app_ai_name") || "thedal-rag Agent"
+  );
+  const [aiPersona, setAiPersona] = useState(
+    localStorage.getItem("app_ai_persona") || "customer_support"
+  );
+
+  const handleAiNameChange = (name) => {
+    setAiName(name);
+    localStorage.setItem("app_ai_name", name);
+    window.dispatchEvent(new Event("localstorage-wallet-update"));
+  };
+
+  const handleAiPersonaChange = (persona) => {
+    setAiPersona(persona);
+    localStorage.setItem("app_ai_persona", persona);
+    window.dispatchEvent(new Event("localstorage-wallet-update"));
+  };
+
   const fetchHealthState = async () => {
     setLoading(true);
     setError(null);
@@ -116,6 +135,51 @@ export default function Settings() {
                     }`}
                 />
               </button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Generative Agent Persona Controls */}
+        <Card className="border border-slate-200 dark:border-slate-850">
+          <CardContent className="p-6 flex flex-col gap-4">
+            <div className="flex items-start gap-3">
+              <Cpu className="w-4 h-4 text-blue-500 mt-0.5" />
+              <div>
+                <h3 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">AI Persona Configuration</h3>
+                <p className="text-[10px] text-slate-400 mt-0.5">Customize the agent profile and tone instruction properties.</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-4 border-t border-slate-100 dark:border-slate-900 pt-4">
+              {/* Agent display name field */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] font-bold text-slate-550 dark:text-slate-400 tracking-wider uppercase">
+                  Agent Display Name
+                </label>
+                <input
+                  type="text"
+                  value={aiName}
+                  onChange={(e) => handleAiNameChange(e.target.value)}
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-3.5 py-2 text-xs text-slate-850 dark:text-slate-150 outline-none"
+                  placeholder="Enter Agent Name..."
+                />
+              </div>
+
+              {/* Agent persona tone selector */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] font-bold text-slate-550 dark:text-slate-400 tracking-wider uppercase">
+                  Persona Style & Tone
+                </label>
+                <select
+                  value={aiPersona}
+                  onChange={(e) => handleAiPersonaChange(e.target.value)}
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-3 py-2 text-xs text-slate-850 dark:text-slate-150 outline-none cursor-pointer"
+                >
+                  <option value="customer_support">Support Assistant (Helpful & Friendly)</option>
+                  <option value="technical_expert">Systems Engineer (Analytical & Exact)</option>
+                  <option value="casual_help">Casual Guide (Helpful & Conversational)</option>
+                </select>
+              </div>
             </div>
           </CardContent>
         </Card>

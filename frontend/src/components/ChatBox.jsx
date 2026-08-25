@@ -55,6 +55,16 @@ export default function ChatBox() {
   const [isVoiceActive, setIsVoiceActive] = useState(false);
   const [attachedFile, setAttachedFile] = useState(null);
 
+  const [agentName, setAgentName] = useState(
+    localStorage.getItem("app_ai_name") || "thedal-rag Agent"
+  );
+  const [agentPersona, setAgentPersona] = useState(
+    localStorage.getItem("app_ai_persona") || "customer_support"
+  );
+
+  const messagesEndRef = useRef(null);
+  const recognitionRef = useRef(null);
+
   // Audio response states
   const [speakingMsgIndex, setSpeakingMsgIndex] = useState(null);
   const [speechSentences, setSpeechSentences] = useState([]);
@@ -65,12 +75,18 @@ export default function ChatBox() {
     return saved !== null ? JSON.parse(saved) : false;
   });
 
-  const messagesEndRef = useRef(null);
-  const recognitionRef = useRef(null);
-
   useEffect(() => {
     localStorage.setItem("autoPlayVoice", JSON.stringify(autoPlayVoice));
   }, [autoPlayVoice]);
+
+  useEffect(() => {
+    const handleLocalStorageUpdate = () => {
+      setAgentName(localStorage.getItem("app_ai_name") || "thedal-rag Agent");
+      setAgentPersona(localStorage.getItem("app_ai_persona") || "customer_support");
+    };
+    window.addEventListener("localstorage-wallet-update", handleLocalStorageUpdate);
+    return () => window.removeEventListener("localstorage-wallet-update", handleLocalStorageUpdate);
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -290,30 +306,67 @@ export default function ChatBox() {
 
   const triggerMockReply = (userText) => {
     const textLower = userText.toLowerCase();
-    let reply = `I'm ready to answer. Please load document manual PDFs or enter API keys in settings to configure custom answers.`;
+    const isTech = agentPersona === "technical_expert";
+    const isCasual = agentPersona === "casual_help";
+
+    let prefix = "";
+    if (isTech) {
+      prefix = `**[${agentName}: Systems Engineering View]**\n`;
+    } else if (isCasual) {
+      prefix = `**[${agentName} 👋]**\n`;
+    } else {
+      prefix = `**[${agentName}]**\n`;
+    }
+
+    let reply = `${prefix}I'm ready to answer. Please load document manual PDFs or enter API keys in settings to configure custom answers.`;
 
     if (textLower.includes("pricing") || textLower.includes("cost") || textLower.includes("plan")) {
-      reply = `### Pricing & Service Tiers
+      if (isTech) {
+        reply = `${prefix}### Resource Billing Tiers & Infrastructure Metrics
+We partition support processes into three scale nodes:
+1. **Developer Sandbox**: Unbilled quota (1 vector workspace, 100 API health queries/mo).
+2. **Production Node ($29/mo)**: Provisioned scaling (up to 3 RAG namespace namespaces, priority index updates).
+3. **Enterprise Cluster**: Custom service SLA (redundant Mongo storage, isolated vector queries).`;
+      } else if (isCasual) {
+        reply = `${prefix}### Here are our pricing options! 💸
+* **Free Sandbox**: Totally free, great to get started (1 bot, 100 queries/month).
+* **Pro Plan ($29/mo)**: Unlimited chats and up to 3 bots!
+* **Enterprise Plan**: Custom build for big teams. Let us know if you need dedicated setups!`;
+      } else {
+        reply = `${prefix}### Pricing & Service Tiers
 We offer three main pricing structures:
 1. **Basic**: Free (1 chatbot, 100 queries/mo).
 2. **Pro**: $29/mo (3 chatbots, unlimited chats, priority indexing).
 3. **Enterprise**: Custom quotes (SLA agreements, private server, custom RAG channels).
 
 *To upgrade, navigate to Billings under settings.*`;
+      }
     } else if (textLower.includes("refund") || textLower.includes("return") || textLower.includes("policy")) {
-      reply = `### Return & Refund Guidelines
+      if (isTech) {
+        reply = `${prefix}### Financial Transaction Offsets & Retention Rules
+* System billing guarantees a **14-day** request window for transaction offsets.
+* Active cancellations terminate recurring subscription invoices immediately.
+* Contact the queue at \`billing@aisupport.com\` to file a dispute log.`;
+      } else if (isCasual) {
+        reply = `${prefix}### Return & Refund info! 💳
+* You can get a full refund within **14 days** of signing up.
+* If you cancel, your subscription won't renew next month.
+* Just shoot an email to \`billing@aisupport.com\` and we'll take care of it!`;
+      } else {
+        reply = `${prefix}### Return & Refund Guidelines
 Our standard policy outlines:
 * Full refunds are permitted within **14 days** of subscription creation.
 * Cancellations stop subsequent renewal payments instantly.
 * Mail queries to \`billing@aisupport.com\` to initiate a dispute.`;
+      }
     } else if (textLower.includes("password") || textLower.includes("account") || textLower.includes("login")) {
-      reply = `### Password Reset Process
-To reset your console passwords:
+      reply = `${prefix}### Password Reset Process
+To reset your console credentials:
 1. Navigate to the login window and click **"Forgot Password?"**.
 2. Supply your organization email account.
 3. Review your mail server for resetting verification links.`;
     } else if (textLower.includes("human") || textLower.includes("agent") || textLower.includes("support")) {
-      reply = `### Contacting Customer Engineering
+      reply = `${prefix}### Technical Escalation Queue
 * **Office hours**: Mon-Fri 9AM-6PM EST.
 * **General hotline**: \`+1 (800) 555-0199\`
 * **Support queue**: \`support@aisupport.com\``;
@@ -498,7 +551,7 @@ To reset your console passwords:
             >
               <FolderOpen className="w-3.5 h-3.5" />
             </button>
-            <span className="text-xs font-bold text-slate-850 dark:text-slate-100">thedal-rag Agent</span>
+            <span className="text-xs font-bold text-slate-850 dark:text-slate-100">{agentName}</span>
             <Badge variant="default" className="text-[9px] px-1.5 py-0 font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400">
               Gemini 3.5 Flash
             </Badge>
