@@ -28,6 +28,8 @@ export default function Overview() {
   });
 
   const [recentUploads, setRecentUploads] = useState([]);
+  const [metricType, setMetricType] = useState("queries");
+  const [logFilter, setLogFilter] = useState("all");
   const [activityTimeline, setActivityTimeline] = useState([
     { id: 1, type: "system", event: "Workspace console initialized", status: "success", time: "10m ago" },
     { id: 2, type: "database", event: "MongoDB Atlas cluster online", status: "success", time: "15m ago" },
@@ -179,15 +181,34 @@ export default function Overview() {
             <h3 className="text-sm font-bold text-slate-900 dark:text-white">Query Latency & Load Metrics</h3>
             <span className="text-[10px] text-slate-400">Weekly query hits and performance indicators</span>
           </div>
-          <Badge variant="info">Active</Badge>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setMetricType("queries")}
+              className={`px-3 py-1 text-[10px] font-bold rounded-lg border transition-all cursor-pointer ${metricType === "queries"
+                  ? "bg-blue-600 text-white border-blue-600 shadow-sm"
+                  : "bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-850 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                }`}
+            >
+              Queries
+            </button>
+            <button
+              onClick={() => setMetricType("latency")}
+              className={`px-3 py-1 text-[10px] font-bold rounded-lg border transition-all cursor-pointer ${metricType === "latency"
+                  ? "bg-cyan-500 text-white border-cyan-500 shadow-sm"
+                  : "bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-850 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                }`}
+            >
+              Latency (ms)
+            </button>
+          </div>
         </CardHeader>
         <CardContent className="px-6 pb-6 pt-2 h-72">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <defs>
-                <linearGradient id="colorQueries" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#4F46E5" stopOpacity={0.2} />
-                  <stop offset="95%" stopColor="#4F46E5" stopOpacity={0} />
+                <linearGradient id="colorMetric" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={metricType === "queries" ? "#4F46E5" : "#06B6D4"} stopOpacity={0.2} />
+                  <stop offset="95%" stopColor={metricType === "queries" ? "#4F46E5" : "#06B6D4"} stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" className="dark:stroke-slate-900" />
@@ -202,7 +223,7 @@ export default function Overview() {
                   color: "inherit"
                 }}
               />
-              <Area type="monotone" dataKey="queries" stroke="#4F46E5" strokeWidth={2} fillOpacity={1} fill="url(#colorQueries)" />
+              <Area type="monotone" dataKey={metricType} stroke={metricType === "queries" ? "#4F46E5" : "#06B6D4"} strokeWidth={2} fillOpacity={1} fill="url(#colorMetric)" />
             </AreaChart>
           </ResponsiveContainer>
         </CardContent>
@@ -258,19 +279,40 @@ export default function Overview() {
             </div>
           </CardHeader>
           <CardContent className="px-6 pb-6">
-            <div className="flex flex-col gap-5 relative before:absolute before:left-2 before:top-2 before:bottom-2 before:w-[1.5px] before:bg-slate-100 dark:before:bg-slate-850">
-              {activityTimeline.map((log) => (
-                <div key={log.id} className="flex gap-4 relative">
-                  <div className={`w-4 h-4 rounded-full border border-white dark:border-slate-950 flex items-center justify-center shrink-0 z-10 ${log.status === "success" ? "bg-emerald-500" : log.status === "danger" ? "bg-rose-500" : "bg-amber-500"
-                    }`}>
-                    <span className="w-1.5 h-1.5 bg-white rounded-full"></span>
-                  </div>
-                  <div className="flex flex-col min-w-0">
-                    <span className="text-xs font-semibold text-slate-750 dark:text-slate-250 leading-snug">{log.event}</span>
-                    <span className="text-[9px] text-slate-400 mt-0.5">{log.time}</span>
-                  </div>
-                </div>
+            {/* Filter Pills */}
+            <div className="flex flex-wrap gap-1.5 mb-4">
+              {["all", "system", "database", "document"].map((type) => (
+                <button
+                  key={type}
+                  onClick={() => setLogFilter(type)}
+                  className={`px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider border transition-all cursor-pointer ${logFilter === type
+                      ? "bg-slate-800 dark:bg-slate-100 text-white dark:text-slate-900 border-transparent shadow-sm"
+                      : "bg-transparent text-slate-400 border-slate-200 dark:border-slate-800 hover:text-slate-600 dark:hover:text-slate-200"
+                    }`}
+                >
+                  {type}
+                </button>
               ))}
+            </div>
+
+            <div className="flex flex-col gap-5 relative before:absolute before:left-2 before:top-2 before:bottom-2 before:w-[1.5px] before:bg-slate-100 dark:before:bg-slate-850">
+              {activityTimeline
+                .filter(log => logFilter === "all" || log.type === logFilter)
+                .map((log) => (
+                  <div key={log.id} className="flex gap-4 relative">
+                    <div className={`w-4 h-4 rounded-full border border-white dark:border-slate-950 flex items-center justify-center shrink-0 z-10 ${log.status === "success" ? "bg-emerald-500" : log.status === "danger" ? "bg-rose-500" : "bg-amber-500"
+                      }`}>
+                      <span className="w-1.5 h-1.5 bg-white rounded-full"></span>
+                    </div>
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-xs font-semibold text-slate-750 dark:text-slate-250 leading-snug">{log.event}</span>
+                      <span className="text-[9px] text-slate-400 mt-0.5">{log.time}</span>
+                    </div>
+                  </div>
+                ))}
+              {activityTimeline.filter(log => logFilter === "all" || log.type === logFilter).length === 0 && (
+                <p className="text-[10px] text-slate-400 text-center py-4">No audit logs matching this filter category.</p>
+              )}
             </div>
           </CardContent>
         </Card>
